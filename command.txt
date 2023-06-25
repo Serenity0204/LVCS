@@ -1,3 +1,6 @@
 go mod init github.com/<username>/<reponame>
-cobra-cli init
-cobra-cli add <name>
+go mod tidy
+
+// for cobra
+    cobra-cli init
+    cobra-cli add <name>
