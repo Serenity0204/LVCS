@@ -42,3 +42,7 @@ build
 # Sublime Text editor
 *.sublime-project
 *.sublime-workspace
+
+
+## for this project
+.lvcs
