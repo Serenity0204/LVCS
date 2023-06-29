@@ -7,7 +7,11 @@ import (
 )
 
 func main() {
-	helper.Init()
+	err := helper.Init()
+	if err != nil {
+		fmt.Println("GG")
+		return
+	}
 	// Example usage
 	data := "Hello, World!"
 	oid, err := helper.HashObject(data)
