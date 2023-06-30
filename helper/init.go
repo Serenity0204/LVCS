@@ -5,23 +5,28 @@ import (
 	"os"
 )
 
-const LVCS_DIR string = ".lvcs"
-const LVCS_OBJECTS string = ".lvcs/objects"
+const lvcsDir string = ".lvcs"
+const lvcsTestDir = "../.lvcs"
 
-func Init() error {
-	_, err := os.Stat(LVCS_DIR)
+func Init(lvcsPath string) error {
+	_, err := os.Stat(lvcsPath)
 	if err == nil {
 		return errors.New(".lvcs directory already exists")
 	}
 
-	err = os.Mkdir(LVCS_DIR, 0755)
+	err = os.Mkdir(lvcsPath, 0755)
 	if err != nil {
 		return errors.New("Failed to create .lvcs")
 	}
-	err = os.Mkdir(LVCS_OBJECTS, 0755)
+	lvcsObjPath := lvcsPath + "/objects"
+	err = os.Mkdir(lvcsObjPath, 0755)
 	if err != nil {
 		return errors.New("Failed to create .lvcs/objects")
 	}
-
+	lvcsStagePath := lvcsPath + "/stage.txt"
+	_, err = os.Create(lvcsStagePath)
+	if err != nil {
+		return errors.New("Failed to create .lvcs/stage.txt")
+	}
 	return nil
 }

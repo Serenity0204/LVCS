@@ -1,0 +1,1 @@
+To implement functionality similar to cat-file in Git, where you convert an object ID (OID) back to its corresponding string content
