@@ -4,3 +4,8 @@ go mod tidy
 // for cobra
     cobra-cli init
     cobra-cli add <name>
+
+// makefile
+    make build
+    make run
+    make test
