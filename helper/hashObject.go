@@ -4,11 +4,21 @@ import (
 	"bytes"
 	"crypto/sha1"
 	"encoding/hex"
+	"errors"
 	"io"
 	"os"
 )
 
 func HashObject(file string, lvcsPath string) (string, error) {
+	info, err := os.Stat(file)
+	if err != nil {
+		return "", err
+	}
+
+	if info.IsDir() {
+		return "", errors.New("Cannot add a directory")
+	}
+
 	content, err := os.ReadFile(file)
 	if err != nil {
 		return "", nil

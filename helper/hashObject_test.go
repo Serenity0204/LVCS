@@ -25,4 +25,10 @@ func TestHashObject(t *testing.T) {
 	if err != nil {
 		t.Errorf("Failed to hash object at %s", path)
 	}
+
+	path = "../test_data/ok"
+	_, err = HashObject(path, lvcsTestDir)
+	if err == nil {
+		t.Errorf("Error is not supposed to be nil at %s", path)
+	}
 }
