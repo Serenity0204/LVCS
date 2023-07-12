@@ -6,15 +6,12 @@ import (
 )
 
 const LvcsDir string = ".lvcs"
-const lvcsTestDir = "../.lvcs"
+const lvcsTestDir string = "../.lvcs"
 
 func AlreadyInit(lvcsPath string) bool {
 	_, err := os.Stat(lvcsPath)
-	// exists
-	if err == nil {
-		return true
-	}
-	return false
+	// exists then err == nil
+	return err == nil
 }
 
 func Init(lvcsPath string) error {
@@ -24,24 +21,24 @@ func Init(lvcsPath string) error {
 
 	err := os.Mkdir(lvcsPath, 0755)
 	if err != nil {
-		return errors.New("Failed to create .lvcs")
+		return errors.New("failed to create .lvcs")
 	}
 	lvcsObjPath := lvcsPath + "/objects"
 	err = os.Mkdir(lvcsObjPath, 0755)
 	if err != nil {
-		return errors.New("Failed to create .lvcs/objects")
+		return errors.New("failed to create .lvcs/objects")
 	}
 
 	lvcsCommitPath := lvcsPath + "/commits"
 	err = os.Mkdir(lvcsCommitPath, 0755)
 	if err != nil {
-		return errors.New("Failed to create .lvcs/commits")
+		return errors.New("failed to create .lvcs/commits")
 	}
 
 	lvcsStagePath := lvcsPath + "/stage.txt"
 	_, err = os.Create(lvcsStagePath)
 	if err != nil {
-		return errors.New("Failed to create .lvcs/stage.txt")
+		return errors.New("failed to create .lvcs/stage.txt")
 	}
 	return nil
 }

@@ -9,14 +9,7 @@ import (
 	"strings"
 )
 
-func BranchExists(commitFolderPath string, branchName string) bool {
-	_, err := os.Stat(commitFolderPath + "/" + branchName)
-	// not exists
-	if err != nil {
-		return false
-	}
-	return true
-}
+
 
 func getLatestVersion(commitFolderPath string, branchName string) (int, error) {
 	files, err := os.ReadDir(commitFolderPath + "/" + branchName)
@@ -28,13 +21,13 @@ func getLatestVersion(commitFolderPath string, branchName string) (int, error) {
 	for _, file := range files {
 		// if it's not a file then it's error
 		if file.IsDir() {
-			return -1, errors.New("Read A Dir Inside commits")
+			return -1, errors.New("read A Dir Inside commits")
 		}
 		// it's a file
 		fileName := file.Name()
 		// check for error
 		if !strings.HasPrefix(fileName, "v") {
-			return -1, errors.New("Wrong version number")
+			return -1, errors.New("wrong version number")
 		}
 
 		// fileName will be in form like v1.txt, v2.txt
@@ -43,7 +36,7 @@ func getLatestVersion(commitFolderPath string, branchName string) (int, error) {
 		version, err := strconv.Atoi(versionStr)
 		if err != nil {
 			// Skip invalid file names
-			return -1, errors.New("Error While Reading Version Numbers")
+			return -1, errors.New("error While Reading Version Numbers")
 		}
 
 		if version > latestVersion {
@@ -92,15 +85,7 @@ func CreateNewCommitRecord(lvcsPath string, branchName string, version int) erro
 	return nil
 }
 
-// need to move later
-func CreateBranch(commitFolderPath string, branchName string) error {
-	newBranchPath := commitFolderPath + "/" + branchName
-	err := os.Mkdir(newBranchPath, 0755)
-	if err != nil {
-		return errors.New("Failed to create branch folder:" + branchName)
-	}
-	return nil
-}
+
 
 func Commit(lvcsPath string, branchName string) error {
 	// default is master for branchName
@@ -114,6 +99,9 @@ func Commit(lvcsPath string, branchName string) error {
 
 	// get the latest version number
 	version, err := getLatestVersion(commitFolderPath, branchName)
+	if err != nil {
+		return err
+	}
 	curVersion := version + 1
 
 	// create the commit record

@@ -16,7 +16,7 @@ func HashObject(file string, lvcsPath string) (string, error) {
 	}
 
 	if info.IsDir() {
-		return "", errors.New("Cannot add a directory")
+		return "", errors.New("cannot add a directory")
 	}
 
 	content, err := os.ReadFile(file)
