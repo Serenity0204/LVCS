@@ -2,7 +2,6 @@ package helper
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -66,13 +65,12 @@ func Add(file string, lvcsPath string) error {
 
 	isIn, err := keyExists(absPath, relativePath)
 	if err != nil {
-		
+
 		return err
 	}
 
 	// if it already exists, don't re-add.
 	if isIn {
-		fmt.Println("WTF")
 		return nil
 	}
 
@@ -94,9 +92,9 @@ func Add(file string, lvcsPath string) error {
 	}
 	defer stageFile.Close()
 
-	fileName := filepath.Base(file)
+	// fileName := filepath.Base(file)
 	// Append absolute file path, oid, filename into stage.txt
-	content := absPath + " " + string(oid) + " " + fileName + "\n"
+	content := absPath + " " + string(oid) + "\n"
 	_, err = stageFile.WriteString(content)
 	if err != nil {
 		return err
