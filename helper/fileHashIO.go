@@ -9,7 +9,35 @@ import (
 	"os"
 )
 
-func HashObject(file string, lvcsPath string) (string, error) {
+type LVCSFileHashIO struct {
+	lvcsPath    string
+	lvcsObjPath string
+}
+
+// NewLVCSAdd creates a new LVCSInit instance
+func NewLVCSFileHashIO(lvcsPath string) *LVCSFileHashIO {
+	return &LVCSFileHashIO{
+		lvcsPath:    lvcsPath,
+		lvcsObjPath: lvcsPath + "/objects",
+	}
+}
+
+func (lvcsFileHashIO *LVCSFileHashIO) CatFile(oid string) (string, error) {
+	relativePath := lvcsFileHashIO.lvcsObjPath + "/" + oid
+	_, err := os.Stat(relativePath)
+	if err != nil {
+		return "", err
+	}
+
+	content, err := os.ReadFile(relativePath)
+	if err != nil {
+		return "", err
+	}
+
+	return string(content), nil
+}
+
+func (lvcsFileHashIO *LVCSFileHashIO) HashObject(file string) (string, error) {
 	info, err := os.Stat(file)
 	if err != nil {
 		return "", err
@@ -29,7 +57,7 @@ func HashObject(file string, lvcsPath string) (string, error) {
 	hash.Write(dataBytes)
 	oid := hex.EncodeToString(hash.Sum(nil))
 
-	relativePath := lvcsPath + "/objects/" + oid
+	relativePath := lvcsFileHashIO.lvcsObjPath + "/" + oid
 	_, err = os.Stat(relativePath)
 	// if already exists
 	if err == nil {

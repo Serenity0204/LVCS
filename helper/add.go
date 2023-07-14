@@ -87,7 +87,8 @@ func (lvcsAdd *LVCSAdd) Add(file string, lvcsPath string) error {
 	}
 
 	// if it DNE then hash object it
-	oid, err := HashObject(file, lvcsPath)
+	lvcsFileHashIO := NewLVCSFileHashIO(lvcsAdd.lvcsPath)
+	oid, err := lvcsFileHashIO.HashObject(file)
 	if err != nil {
 		return err
 	}

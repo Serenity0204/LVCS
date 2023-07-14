@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-
-
 func getLatestVersion(commitFolderPath string, branchName string) (int, error) {
 	files, err := os.ReadDir(commitFolderPath + "/" + branchName)
 	if err != nil {
@@ -84,8 +82,6 @@ func CreateNewCommitRecord(lvcsPath string, branchName string, version int) erro
 	}
 	return nil
 }
-
-
 
 func Commit(lvcsPath string, branchName string) error {
 	// default is master for branchName
