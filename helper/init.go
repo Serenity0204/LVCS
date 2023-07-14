@@ -8,35 +8,50 @@ import (
 const LvcsDir string = ".lvcs"
 const lvcsTestDir string = "../.lvcs"
 
-func AlreadyInit(lvcsPath string) bool {
-	_, err := os.Stat(lvcsPath)
+type LVCSInit struct {
+	lvcsPath       string
+	lvcsObjPath    string
+	lvcsCommitPath string
+	lvcsStagePath  string
+}
+
+// NewLVCSAdd creates a new LVCSInit instance
+func NewLVCSInit(lvcsPath string) *LVCSInit {
+	return &LVCSInit{
+		lvcsPath:       lvcsPath,
+		lvcsObjPath:    lvcsPath + "/objects",
+		lvcsCommitPath: lvcsPath + "/commits",
+		lvcsStagePath:  lvcsPath + "/stage.txt",
+	}
+}
+
+func (lvcsInit *LVCSInit) AlreadyInit() bool {
+	_, err := os.Stat(lvcsInit.lvcsPath)
 	// exists then err == nil
 	return err == nil
 }
 
-func Init(lvcsPath string) error {
-	if AlreadyInit(lvcsPath) {
+func (lvcsInit *LVCSInit) Init() error {
+	if lvcsInit.AlreadyInit() {
 		return errors.New(".lvcs directory already exists")
 	}
 
-	err := os.Mkdir(lvcsPath, 0755)
+	err := os.Mkdir(lvcsInit.lvcsPath, 0755)
 	if err != nil {
 		return errors.New("failed to create .lvcs")
 	}
-	lvcsObjPath := lvcsPath + "/objects"
-	err = os.Mkdir(lvcsObjPath, 0755)
+
+	err = os.Mkdir(lvcsInit.lvcsObjPath, 0755)
 	if err != nil {
 		return errors.New("failed to create .lvcs/objects")
 	}
 
-	lvcsCommitPath := lvcsPath + "/commits"
-	err = os.Mkdir(lvcsCommitPath, 0755)
+	err = os.Mkdir(lvcsInit.lvcsCommitPath, 0755)
 	if err != nil {
 		return errors.New("failed to create .lvcs/commits")
 	}
 
-	lvcsStagePath := lvcsPath + "/stage.txt"
-	_, err = os.Create(lvcsStagePath)
+	_, err = os.Create(lvcsInit.lvcsStagePath)
 	if err != nil {
 		return errors.New("failed to create .lvcs/stage.txt")
 	}

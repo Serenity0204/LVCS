@@ -1,33 +1,35 @@
 package helper
 
 import (
-	"os"
 	"testing"
 )
 
 func TestAdd(t *testing.T) {
-	_, err := os.Stat(lvcsTestDir)
-	// if does not exist
-	if err != nil {
-		err = Init(lvcsTestDir)
+	lvcsInit := NewLVCSInit(lvcsTestDir)
+	if !lvcsInit.AlreadyInit() {
+		err := lvcsInit.Init()
 		if err != nil {
 			t.Errorf("Create LVCS DIR failed")
 		}
 	}
+
+	lvcsAdd := NewLVCSAdd(lvcsTestDir)
+
 	path := "../test_data/a.txt"
-	err = Add(path, lvcsTestDir)
+	err := lvcsAdd.Add(path, lvcsTestDir)
 	if err != nil {
-		t.Errorf("Failed to add %s", path)
+		t.Errorf("Failed to add %s: %s", path, err.Error())
 	}
+
 	path = "../test_data/b.txt"
-	err = Add(path, lvcsTestDir)
+	err = lvcsAdd.Add(path, lvcsTestDir)
 	if err != nil {
-		t.Errorf("Failed to add %s", path)
+		t.Errorf("Failed to add %s: %s", path, err.Error())
 	}
 
 	path = "../test_data/ok/abc.txt"
-	err = Add(path, lvcsTestDir)
+	err = lvcsAdd.Add(path, lvcsTestDir)
 	if err != nil {
-		t.Errorf("Failed to add %s", path)
+		t.Errorf("Failed to add %s: %s", path, err.Error())
 	}
 }

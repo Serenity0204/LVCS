@@ -6,10 +6,12 @@ import (
 )
 
 func TestCommit(t *testing.T) {
-	// check if file exists
-	if !AlreadyInit(lvcsTestDir) {
-		Init(lvcsTestDir)
-		return
+	lvcsInit := NewLVCSInit(lvcsTestDir)
+	if !lvcsInit.AlreadyInit() {
+		err := lvcsInit.Init()
+		if err != nil {
+			t.Errorf("Create LVCS DIR failed")
+		}
 	}
 
 	fileInfo, err := os.Stat(lvcsTestDir + "/stage.txt")

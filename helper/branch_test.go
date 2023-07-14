@@ -3,8 +3,9 @@ package helper
 import "testing"
 
 func TestBranch(t *testing.T) {
-	if !AlreadyInit(lvcsTestDir) {
-		err := Init(lvcsTestDir)
+	lvcsInit := NewLVCSInit(lvcsTestDir)
+	if !lvcsInit.AlreadyInit() {
+		err := lvcsInit.Init()
 		if err != nil {
 			t.Errorf("Create LVCS DIR failed")
 		}

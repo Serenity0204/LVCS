@@ -7,8 +7,21 @@ import (
 	"strings"
 )
 
+type LVCSAdd struct {
+	lvcsPath      string
+	lvcsStagePath string
+}
+
+// NewLVCSAdd creates a new LVCSAdd instance
+func NewLVCSAdd(lvcsPath string) *LVCSAdd {
+	return &LVCSAdd{
+		lvcsPath:      lvcsPath,
+		lvcsStagePath: lvcsPath + "/stage.txt",
+	}
+}
+
 // GetAbsolutePath returns the absolute path of a file given its relative path
-func getAbsolutePath(relativePath string) (string, error) {
+func (lvcsAdd *LVCSAdd) getAbsolutePath(relativePath string) (string, error) {
 	// Get the absolute path of the current working directory
 	wd, err := os.Getwd()
 	if err != nil {
@@ -19,9 +32,9 @@ func getAbsolutePath(relativePath string) (string, error) {
 	return absolutePath, nil
 }
 
-func keyExists(target string, lvcsPath string) (bool, error) {
+func (lvcsAdd *LVCSAdd) keyExists(target string) (bool, error) {
 	// Open the file
-	file, err := os.Open(lvcsPath)
+	file, err := os.Open(lvcsAdd.lvcsStagePath)
 	if err != nil {
 		return false, err
 	}
@@ -55,15 +68,14 @@ func keyExists(target string, lvcsPath string) (bool, error) {
 }
 
 // need to check if file exist or not, if yes then do early return
-func Add(file string, lvcsPath string) error {
+func (lvcsAdd *LVCSAdd) Add(file string, lvcsPath string) error {
 
-	absPath, err := getAbsolutePath(file)
+	absPath, err := lvcsAdd.getAbsolutePath(file)
 	if err != nil {
 		return err
 	}
-	relativePath := lvcsPath + "/stage.txt"
 
-	isIn, err := keyExists(absPath, relativePath)
+	isIn, err := lvcsAdd.keyExists(absPath)
 	if err != nil {
 
 		return err
@@ -74,19 +86,14 @@ func Add(file string, lvcsPath string) error {
 		return nil
 	}
 
+	// if it DNE then hash object it
 	oid, err := HashObject(file, lvcsPath)
 	if err != nil {
 		return err
 	}
 
-	_, err = os.Stat(relativePath)
-	// if does not exist
-	if err != nil {
-		return err
-	}
-
 	// open the file
-	stageFile, err := os.OpenFile(relativePath, os.O_APPEND, 0644)
+	stageFile, err := os.OpenFile(lvcsAdd.lvcsStagePath, os.O_APPEND, 0644)
 	if err != nil {
 		return err
 	}
