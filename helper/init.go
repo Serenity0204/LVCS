@@ -9,19 +9,21 @@ const LvcsDir string = ".lvcs"
 const lvcsTestDir string = "../.lvcs"
 
 type LVCSInitManager struct {
-	lvcsPath       string
-	lvcsObjPath    string
-	lvcsCommitPath string
-	lvcsStagePath  string
+	lvcsPath           string
+	lvcsObjPath        string
+	lvcsCommitPath     string
+	lvcsStagePath      string
+	lvcsCurrentRefPath string
 }
 
 // creates a new LVCSInit instance
 func NewLVCSInitManager(lvcsPath string) *LVCSInitManager {
 	return &LVCSInitManager{
-		lvcsPath:       lvcsPath,
-		lvcsObjPath:    lvcsPath + "/objects",
-		lvcsCommitPath: lvcsPath + "/commits",
-		lvcsStagePath:  lvcsPath + "/stage.txt",
+		lvcsPath:           lvcsPath,
+		lvcsObjPath:        lvcsPath + "/objects",
+		lvcsCommitPath:     lvcsPath + "/commits",
+		lvcsStagePath:      lvcsPath + "/stage.txt",
+		lvcsCurrentRefPath: lvcsPath + "/currentRef.txt",
 	}
 }
 
@@ -54,6 +56,10 @@ func (lvcsInit *LVCSInitManager) Init() error {
 	_, err = os.Create(lvcsInit.lvcsStagePath)
 	if err != nil {
 		return errors.New("failed to create .lvcs/stage.txt")
+	}
+	_, err = os.Create(lvcsInit.lvcsCurrentRefPath)
+	if err != nil {
+		return errors.New("failed to create .lvcs/currentRef.txt")
 	}
 	return nil
 }

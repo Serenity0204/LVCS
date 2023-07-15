@@ -16,19 +16,19 @@ func TestAdd(t *testing.T) {
 	lvcsAdd := NewLVCSAddManager(lvcsTestDir)
 
 	path := "../test_data/a.txt"
-	err := lvcsAdd.Add(path, lvcsTestDir)
+	err := lvcsAdd.Add(path)
 	if err != nil {
 		t.Errorf("Failed to add %s: %s", path, err.Error())
 	}
 
 	path = "../test_data/b.txt"
-	err = lvcsAdd.Add(path, lvcsTestDir)
+	err = lvcsAdd.Add(path)
 	if err != nil {
 		t.Errorf("Failed to add %s: %s", path, err.Error())
 	}
 
 	path = "../test_data/ok/abc.txt"
-	err = lvcsAdd.Add(path, lvcsTestDir)
+	err = lvcsAdd.Add(path)
 	if err != nil {
 		t.Errorf("Failed to add %s: %s", path, err.Error())
 	}

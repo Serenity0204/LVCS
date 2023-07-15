@@ -86,7 +86,7 @@ func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, ve
 	return nil
 }
 
-func (lvcsCommit *LVCSCommitManager) Commit(lvcsPath string, branchName string) error {
+func (lvcsCommit *LVCSCommitManager) Commit(branchName string) error {
 	// default is master for branchName
 	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
 	check := lvcsBranch.BranchExists(branchName)

@@ -68,7 +68,7 @@ func (lvcsAdd *LVCSAddManager) keyExists(target string) (bool, error) {
 }
 
 // need to check if file exist or not, if yes then do early return
-func (lvcsAdd *LVCSAddManager) Add(file string, lvcsPath string) error {
+func (lvcsAdd *LVCSAddManager) Add(file string) error {
 
 	absPath, err := lvcsAdd.getAbsolutePath(file)
 	if err != nil {

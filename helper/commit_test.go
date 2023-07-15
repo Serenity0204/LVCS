@@ -42,11 +42,11 @@ func TestCommit(t *testing.T) {
 	}
 
 	lvcsCommit := NewLVCSCommitManager(lvcsTestDir)
-	err = lvcsCommit.Commit(lvcsTestDir, master)
+	err = lvcsCommit.Commit(master)
 	if err != nil {
 		t.Errorf("Failed to commit " + master)
 	}
-	err = lvcsCommit.Commit(lvcsTestDir, test1)
+	err = lvcsCommit.Commit(test1)
 	if err != nil {
 		t.Errorf("Failed to commit " + test1)
 	}
