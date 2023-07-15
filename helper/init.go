@@ -57,9 +57,17 @@ func (lvcsInit *LVCSInitManager) Init() error {
 	if err != nil {
 		return errors.New("failed to create .lvcs/stage.txt")
 	}
-	_, err = os.Create(lvcsInit.lvcsCurrentRefPath)
+
+	file, err := os.OpenFile(lvcsInit.lvcsCurrentRefPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
-		return errors.New("failed to create .lvcs/currentRef.txt")
+		return errors.New("failed to open .lvcs/currentRef.txt")
+	}
+	defer file.Close()
+
+	// Write "master" to the file as default branch
+	_, err = file.WriteString("master\nHEAD\n")
+	if err != nil {
+		return errors.New("failed to write to .lvcs/currentRef.txt")
 	}
 	return nil
 }
