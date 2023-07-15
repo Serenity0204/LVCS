@@ -1,12 +1,11 @@
-package helper
+package utils
 
 import (
 	"errors"
 	"os"
 )
 
-const LvcsDir string = ".lvcs"
-const lvcsTestDir string = "../.lvcs"
+
 
 type LVCSInitManager struct {
 	lvcsPath           string

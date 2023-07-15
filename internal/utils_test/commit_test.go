@@ -1,12 +1,14 @@
-package helper
+package utils_test
 
 import (
 	"os"
 	"testing"
+
+	"github.com/Serenity0204/LVCS/internal/utils"
 )
 
 func TestCommit(t *testing.T) {
-	lvcsInit := NewLVCSInitManager(lvcsTestDir)
+	lvcsInit := utils.NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -26,7 +28,7 @@ func TestCommit(t *testing.T) {
 	// branches
 	master := "master"
 	test1 := "test1"
-	lvcsBranch := NewLVCSBranchManager(lvcsTestDir)
+	lvcsBranch := utils.NewLVCSBranchManager(lvcsTestDir)
 
 	if !lvcsBranch.BranchExists(master) {
 		err := lvcsBranch.CreateBranch(master)
@@ -41,7 +43,7 @@ func TestCommit(t *testing.T) {
 		}
 	}
 
-	lvcsCommit := NewLVCSCommitManager(lvcsTestDir)
+	lvcsCommit := utils.NewLVCSCommitManager(lvcsTestDir)
 	err = lvcsCommit.Commit(master)
 	if err != nil {
 		t.Errorf("Failed to commit " + master)

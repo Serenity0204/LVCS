@@ -4,7 +4,7 @@ build:
 	go build -o build main.go
 
 test:
-	cd helper && go test -v
+	cd internal/utils_test && go test -v
 
 # ## without argument
 # run:

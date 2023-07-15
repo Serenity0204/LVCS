@@ -1,11 +1,13 @@
-package helper
+package utils_test
 
 import (
 	"testing"
+
+	"github.com/Serenity0204/LVCS/internal/utils"
 )
 
 func TestHashObject(t *testing.T) {
-	lvcsInit := NewLVCSInitManager(lvcsTestDir)
+	lvcsInit := utils.NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -13,20 +15,20 @@ func TestHashObject(t *testing.T) {
 		}
 	}
 
-	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsTestDir)
+	lvcsFileHashIO := utils.NewLVCSFileHashIOManager(lvcsTestDir)
 
-	path := "../test_data/a.txt"
+	path := "../../test_data/a.txt"
 	_, err := lvcsFileHashIO.HashObject(path)
 	if err != nil {
 		t.Errorf("Failed to hash object at %s", path)
 	}
-	path = "../test_data/b.txt"
+	path = "../../test_data/b.txt"
 	_, err = lvcsFileHashIO.HashObject(path)
 	if err != nil {
 		t.Errorf("Failed to hash object at %s", path)
 	}
 
-	path = "../test_data/ok"
+	path = "../../test_data/ok"
 	_, err = lvcsFileHashIO.HashObject(path)
 	if err == nil {
 		t.Errorf("Error is not supposed to be nil at %s", path)
@@ -34,7 +36,7 @@ func TestHashObject(t *testing.T) {
 }
 
 func TestCatFile(t *testing.T) {
-	lvcsInit := NewLVCSInitManager(lvcsTestDir)
+	lvcsInit := utils.NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -42,7 +44,7 @@ func TestCatFile(t *testing.T) {
 		}
 	}
 
-	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsTestDir)
+	lvcsFileHashIO := utils.NewLVCSFileHashIOManager(lvcsTestDir)
 	oid := "533c92f19449072cbc46ba5719362362d8db2e3c"
 	content, err := lvcsFileHashIO.CatFile(oid)
 	expectedContent := "I am BBBBB"

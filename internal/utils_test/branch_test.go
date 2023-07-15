@@ -1,9 +1,13 @@
-package helper
+package utils_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/Serenity0204/LVCS/internal/utils"
+)
 
 func TestBranch(t *testing.T) {
-	lvcsInit := NewLVCSInitManager(lvcsTestDir)
+	lvcsInit := utils.NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -13,7 +17,7 @@ func TestBranch(t *testing.T) {
 
 	main := "main"
 	test2 := "test2"
-	lvcsBranch := NewLVCSBranchManager(lvcsTestDir)
+	lvcsBranch := utils.NewLVCSBranchManager(lvcsTestDir)
 
 	if !lvcsBranch.BranchExists(main) {
 		err := lvcsBranch.CreateBranch(main)
