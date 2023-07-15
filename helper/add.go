@@ -7,21 +7,21 @@ import (
 	"strings"
 )
 
-type LVCSAdd struct {
+type LVCSAddManager struct {
 	lvcsPath      string
 	lvcsStagePath string
 }
 
-// NewLVCSAdd creates a new LVCSAdd instance
-func NewLVCSAdd(lvcsPath string) *LVCSAdd {
-	return &LVCSAdd{
+// NewLVCSAddManager creates a new LVCSAdd instance
+func NewLVCSAddManager(lvcsPath string) *LVCSAddManager {
+	return &LVCSAddManager{
 		lvcsPath:      lvcsPath,
 		lvcsStagePath: lvcsPath + "/stage.txt",
 	}
 }
 
 // GetAbsolutePath returns the absolute path of a file given its relative path
-func (lvcsAdd *LVCSAdd) getAbsolutePath(relativePath string) (string, error) {
+func (lvcsAdd *LVCSAddManager) getAbsolutePath(relativePath string) (string, error) {
 	// Get the absolute path of the current working directory
 	wd, err := os.Getwd()
 	if err != nil {
@@ -32,7 +32,7 @@ func (lvcsAdd *LVCSAdd) getAbsolutePath(relativePath string) (string, error) {
 	return absolutePath, nil
 }
 
-func (lvcsAdd *LVCSAdd) keyExists(target string) (bool, error) {
+func (lvcsAdd *LVCSAddManager) keyExists(target string) (bool, error) {
 	// Open the file
 	file, err := os.Open(lvcsAdd.lvcsStagePath)
 	if err != nil {
@@ -68,7 +68,7 @@ func (lvcsAdd *LVCSAdd) keyExists(target string) (bool, error) {
 }
 
 // need to check if file exist or not, if yes then do early return
-func (lvcsAdd *LVCSAdd) Add(file string, lvcsPath string) error {
+func (lvcsAdd *LVCSAddManager) Add(file string, lvcsPath string) error {
 
 	absPath, err := lvcsAdd.getAbsolutePath(file)
 	if err != nil {
@@ -87,7 +87,7 @@ func (lvcsAdd *LVCSAdd) Add(file string, lvcsPath string) error {
 	}
 
 	// if it DNE then hash object it
-	lvcsFileHashIO := NewLVCSFileHashIO(lvcsAdd.lvcsPath)
+	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsAdd.lvcsPath)
 	oid, err := lvcsFileHashIO.HashObject(file)
 	if err != nil {
 		return err

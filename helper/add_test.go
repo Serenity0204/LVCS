@@ -5,7 +5,7 @@ import (
 )
 
 func TestAdd(t *testing.T) {
-	lvcsInit := NewLVCSInit(lvcsTestDir)
+	lvcsInit := NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -13,7 +13,7 @@ func TestAdd(t *testing.T) {
 		}
 	}
 
-	lvcsAdd := NewLVCSAdd(lvcsTestDir)
+	lvcsAdd := NewLVCSAddManager(lvcsTestDir)
 
 	path := "../test_data/a.txt"
 	err := lvcsAdd.Add(path, lvcsTestDir)

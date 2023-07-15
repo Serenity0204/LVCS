@@ -9,8 +9,23 @@ import (
 	"strings"
 )
 
-func getLatestVersion(commitFolderPath string, branchName string) (int, error) {
-	files, err := os.ReadDir(commitFolderPath + "/" + branchName)
+type LVCSCommitManager struct {
+	lvcsPath       string
+	lvcsCommitPath string
+	lvcsStagePath  string
+}
+
+// creates a new LVCSCommit instance
+func NewLVCSCommitManager(lvcsPath string) *LVCSCommitManager {
+	return &LVCSCommitManager{
+		lvcsPath:       lvcsPath,
+		lvcsCommitPath: lvcsPath + "/commits",
+		lvcsStagePath:  lvcsPath + "/stage.txt",
+	}
+}
+
+func (lvcsCommit *LVCSCommitManager) getLatestVersion(branchName string) (int, error) {
+	files, err := os.ReadDir(lvcsCommit.lvcsCommitPath + "/" + branchName)
 	if err != nil {
 		return 0, err
 	}
@@ -44,29 +59,17 @@ func getLatestVersion(commitFolderPath string, branchName string) (int, error) {
 	return latestVersion, nil
 }
 
-// need to move this later too
-func RemoveStageContent(lvcsPath string) error {
-	stagePath := lvcsPath + "/stage.txt"
-	stageFile, err := os.OpenFile(stagePath, os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-	defer stageFile.Close()
-	return nil
-}
-
-func CreateNewCommitRecord(lvcsPath string, branchName string, version int) error {
+func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, version int) error {
 
 	// get the stage content
-	stagePath := lvcsPath + "/stage.txt"
-	content, err := os.ReadFile(stagePath)
+	content, err := os.ReadFile(lvcsCommit.lvcsStagePath)
 	if err != nil {
 		return err
 	}
 
-	branchPath := lvcsPath + "/commits/" + branchName + "/v" + strconv.Itoa(version) + ".txt"
+	branchPath := lvcsCommit.lvcsCommitPath + "/" + branchName + "/v" + strconv.Itoa(version) + ".txt"
 
-	// else create
+	// create
 	versionFile, err := os.Create(branchPath)
 	if err != nil {
 		return err
@@ -83,27 +86,37 @@ func CreateNewCommitRecord(lvcsPath string, branchName string, version int) erro
 	return nil
 }
 
-func Commit(lvcsPath string, branchName string) error {
+func (lvcsCommit *LVCSCommitManager) Commit(lvcsPath string, branchName string) error {
 	// default is master for branchName
-	commitFolderPath := lvcsPath + "/commits/"
-
-	check := BranchExists(commitFolderPath, branchName)
+	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
+	check := lvcsBranch.BranchExists(branchName)
 	// branch does not exist
 	if !check {
 		return errors.New("Branch:" + branchName + " does not exist")
 	}
 
 	// get the latest version number
-	version, err := getLatestVersion(commitFolderPath, branchName)
+	version, err := lvcsCommit.getLatestVersion(branchName)
 	if err != nil {
 		return err
 	}
 	curVersion := version + 1
 
 	// create the commit record
-	err = CreateNewCommitRecord(lvcsPath, branchName, curVersion)
+	err = lvcsCommit.createNewCommitRecord(branchName, curVersion)
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+// need to move this later too
+func RemoveStageContent(lvcsPath string) error {
+	stagePath := lvcsPath + "/stage.txt"
+	stageFile, err := os.OpenFile(stagePath, os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer stageFile.Close()
 	return nil
 }

@@ -3,7 +3,7 @@ package helper
 import "testing"
 
 func TestBranch(t *testing.T) {
-	lvcsInit := NewLVCSInit(lvcsTestDir)
+	lvcsInit := NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -13,15 +13,16 @@ func TestBranch(t *testing.T) {
 
 	main := "main"
 	test2 := "test2"
-	commitFolderPath := lvcsTestDir + "/commits/"
-	if !BranchExists(commitFolderPath, main) {
-		err := CreateBranch(commitFolderPath, main)
+	lvcsBranch := NewLVCSBranchManager(lvcsTestDir)
+
+	if !lvcsBranch.BranchExists(main) {
+		err := lvcsBranch.CreateBranch(main)
 		if err != nil {
 			t.Errorf("Create branch:" + main + " failed")
 		}
 	}
-	if !BranchExists(commitFolderPath, test2) {
-		err := CreateBranch(commitFolderPath, test2)
+	if !lvcsBranch.BranchExists(test2) {
+		err := lvcsBranch.CreateBranch(test2)
 		if err != nil {
 			t.Errorf("Create branch:" + test2 + " failed")
 		}

@@ -5,7 +5,7 @@ import (
 )
 
 func TestInit(t *testing.T) {
-	lvcsInit := NewLVCSInit(lvcsTestDir)
+	lvcsInit := NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {

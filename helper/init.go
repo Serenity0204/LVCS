@@ -8,16 +8,16 @@ import (
 const LvcsDir string = ".lvcs"
 const lvcsTestDir string = "../.lvcs"
 
-type LVCSInit struct {
+type LVCSInitManager struct {
 	lvcsPath       string
 	lvcsObjPath    string
 	lvcsCommitPath string
 	lvcsStagePath  string
 }
 
-// NewLVCSAdd creates a new LVCSInit instance
-func NewLVCSInit(lvcsPath string) *LVCSInit {
-	return &LVCSInit{
+// creates a new LVCSInit instance
+func NewLVCSInitManager(lvcsPath string) *LVCSInitManager {
+	return &LVCSInitManager{
 		lvcsPath:       lvcsPath,
 		lvcsObjPath:    lvcsPath + "/objects",
 		lvcsCommitPath: lvcsPath + "/commits",
@@ -25,13 +25,13 @@ func NewLVCSInit(lvcsPath string) *LVCSInit {
 	}
 }
 
-func (lvcsInit *LVCSInit) AlreadyInit() bool {
+func (lvcsInit *LVCSInitManager) AlreadyInit() bool {
 	_, err := os.Stat(lvcsInit.lvcsPath)
 	// exists then err == nil
 	return err == nil
 }
 
-func (lvcsInit *LVCSInit) Init() error {
+func (lvcsInit *LVCSInitManager) Init() error {
 	if lvcsInit.AlreadyInit() {
 		return errors.New(".lvcs directory already exists")
 	}

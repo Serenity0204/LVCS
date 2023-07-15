@@ -6,7 +6,7 @@ import (
 )
 
 func TestCommit(t *testing.T) {
-	lvcsInit := NewLVCSInit(lvcsTestDir)
+	lvcsInit := NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -26,20 +26,27 @@ func TestCommit(t *testing.T) {
 	// branches
 	master := "master"
 	test1 := "test1"
+	lvcsBranch := NewLVCSBranchManager(lvcsTestDir)
 
-	commitFolderPath := lvcsTestDir + "/commits/"
-	if !BranchExists(commitFolderPath, master) {
-		CreateBranch(commitFolderPath, master)
+	if !lvcsBranch.BranchExists(master) {
+		err := lvcsBranch.CreateBranch(master)
+		if err != nil {
+			t.Errorf("Create branch:" + master + " failed")
+		}
 	}
-	if !BranchExists(commitFolderPath, test1) {
-		CreateBranch(commitFolderPath, test1)
+	if !lvcsBranch.BranchExists(test1) {
+		err := lvcsBranch.CreateBranch(test1)
+		if err != nil {
+			t.Errorf("Create branch:" + test1 + " failed")
+		}
 	}
-	// not 0 then commit
-	err = Commit(lvcsTestDir, master)
+
+	lvcsCommit := NewLVCSCommitManager(lvcsTestDir)
+	err = lvcsCommit.Commit(lvcsTestDir, master)
 	if err != nil {
 		t.Errorf("Failed to commit " + master)
 	}
-	err = Commit(lvcsTestDir, test1)
+	err = lvcsCommit.Commit(lvcsTestDir, test1)
 	if err != nil {
 		t.Errorf("Failed to commit " + test1)
 	}

@@ -9,20 +9,20 @@ import (
 	"os"
 )
 
-type LVCSFileHashIO struct {
+type LVCSFileHashIOManager struct {
 	lvcsPath    string
 	lvcsObjPath string
 }
 
-// NewLVCSAdd creates a new LVCSInit instance
-func NewLVCSFileHashIO(lvcsPath string) *LVCSFileHashIO {
-	return &LVCSFileHashIO{
+// creates a new LVCSInit instance
+func NewLVCSFileHashIOManager(lvcsPath string) *LVCSFileHashIOManager {
+	return &LVCSFileHashIOManager{
 		lvcsPath:    lvcsPath,
 		lvcsObjPath: lvcsPath + "/objects",
 	}
 }
 
-func (lvcsFileHashIO *LVCSFileHashIO) CatFile(oid string) (string, error) {
+func (lvcsFileHashIO *LVCSFileHashIOManager) CatFile(oid string) (string, error) {
 	relativePath := lvcsFileHashIO.lvcsObjPath + "/" + oid
 	_, err := os.Stat(relativePath)
 	if err != nil {
@@ -37,7 +37,7 @@ func (lvcsFileHashIO *LVCSFileHashIO) CatFile(oid string) (string, error) {
 	return string(content), nil
 }
 
-func (lvcsFileHashIO *LVCSFileHashIO) HashObject(file string) (string, error) {
+func (lvcsFileHashIO *LVCSFileHashIOManager) HashObject(file string) (string, error) {
 	info, err := os.Stat(file)
 	if err != nil {
 		return "", err

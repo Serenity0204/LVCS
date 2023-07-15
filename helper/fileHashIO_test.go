@@ -5,7 +5,7 @@ import (
 )
 
 func TestHashObject(t *testing.T) {
-	lvcsInit := NewLVCSInit(lvcsTestDir)
+	lvcsInit := NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -13,7 +13,7 @@ func TestHashObject(t *testing.T) {
 		}
 	}
 
-	lvcsFileHashIO := NewLVCSFileHashIO(lvcsTestDir)
+	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsTestDir)
 
 	path := "../test_data/a.txt"
 	_, err := lvcsFileHashIO.HashObject(path)
@@ -34,7 +34,7 @@ func TestHashObject(t *testing.T) {
 }
 
 func TestCatFile(t *testing.T) {
-	lvcsInit := NewLVCSInit(lvcsTestDir)
+	lvcsInit := NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
@@ -42,7 +42,7 @@ func TestCatFile(t *testing.T) {
 		}
 	}
 
-	lvcsFileHashIO := NewLVCSFileHashIO(lvcsTestDir)
+	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsTestDir)
 	oid := "533c92f19449072cbc46ba5719362362d8db2e3c"
 	content, err := lvcsFileHashIO.CatFile(oid)
 	expectedContent := "I am BBBBB"
