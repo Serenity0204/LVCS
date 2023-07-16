@@ -12,13 +12,13 @@ func TestCommit(t *testing.T) {
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
-			t.Errorf("Create LVCS DIR failed")
+			t.Errorf("create LVCS DIR failed")
 		}
 	}
 
 	fileInfo, err := os.Stat(lvcsTestDir + "/stage.txt")
 	if err != nil {
-		t.Errorf("Init failed inside commit")
+		t.Errorf("init failed inside commit")
 	}
 
 	// Check if file size is 0
@@ -33,23 +33,23 @@ func TestCommit(t *testing.T) {
 	if !lvcsBranch.BranchExists(master) {
 		err := lvcsBranch.CreateBranch(master)
 		if err != nil {
-			t.Errorf("Create branch:" + master + " failed")
+			t.Errorf("create branch:" + master + " failed")
 		}
 	}
 	if !lvcsBranch.BranchExists(test1) {
 		err := lvcsBranch.CreateBranch(test1)
 		if err != nil {
-			t.Errorf("Create branch:" + test1 + " failed")
+			t.Errorf("create branch:" + test1 + " failed")
 		}
 	}
 
 	lvcsCommit := utils.NewLVCSCommitManager(lvcsTestDir)
 	err = lvcsCommit.Commit(master)
 	if err != nil {
-		t.Errorf("Failed to commit " + master)
+		t.Errorf("failed to commit " + master)
 	}
 	err = lvcsCommit.Commit(test1)
 	if err != nil {
-		t.Errorf("Failed to commit " + test1)
+		t.Errorf("failed to commit " + test1)
 	}
 }

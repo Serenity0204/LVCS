@@ -12,7 +12,7 @@ type LVCSAddManager struct {
 	lvcsStagePath string
 }
 
-// NewLVCSAddManager creates a new LVCSAdd instance
+// creates a new LVCSAdd instance
 func NewLVCSAddManager(lvcsPath string) *LVCSAddManager {
 	return &LVCSAddManager{
 		lvcsPath:      lvcsPath,

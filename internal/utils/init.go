@@ -5,8 +5,6 @@ import (
 	"os"
 )
 
-
-
 type LVCSInitManager struct {
 	lvcsPath           string
 	lvcsObjPath        string
@@ -50,6 +48,11 @@ func (lvcsInit *LVCSInitManager) Init() error {
 	err = os.Mkdir(lvcsInit.lvcsCommitPath, 0755)
 	if err != nil {
 		return errors.New("failed to create .lvcs/commits")
+	}
+	// create default branch
+	err = os.Mkdir(lvcsInit.lvcsCommitPath+"/master", 0755)
+	if err != nil {
+		return errors.New("failed to create the default branch: .lvcs/commits/master")
 	}
 
 	_, err = os.Create(lvcsInit.lvcsStagePath)

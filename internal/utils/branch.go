@@ -14,7 +14,7 @@ type LVCSBranchManager struct {
 	lvcsCurrentRefPath string
 }
 
-// NewLVCSAdd creates a new LVCSCommit instance
+// creates a new LVCSCommit instance
 func NewLVCSBranchManager(lvcsPath string) *LVCSBranchManager {
 	return &LVCSBranchManager{
 		lvcsPath:           lvcsPath,

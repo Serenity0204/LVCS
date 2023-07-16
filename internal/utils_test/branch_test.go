@@ -11,7 +11,7 @@ func TestBranch(t *testing.T) {
 	if !lvcsInit.AlreadyInit() {
 		err := lvcsInit.Init()
 		if err != nil {
-			t.Errorf("Create LVCS DIR failed")
+			t.Errorf("create LVCS DIR failed")
 		}
 	}
 

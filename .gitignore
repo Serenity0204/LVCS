@@ -42,3 +42,4 @@ build
 
 ## for this project
 .lvcs
+.lvcs_test
