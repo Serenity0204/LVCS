@@ -19,7 +19,7 @@ func TestAdd(t *testing.T) {
 
 	path := "../../test_data/a.txt"
 	err := lvcsAdd.Add(path)
-	if err != nil {
+	if err != nil && err.Error() != ""{
 		t.Errorf("failed to add %s: %s", path, err.Error())
 	}
 

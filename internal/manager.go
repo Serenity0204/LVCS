@@ -2,6 +2,7 @@ package internal
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/Serenity0204/LVCS/internal/utils"
 )
@@ -30,13 +31,23 @@ func NewLVCSManager(lvcsPath string) *LVCSManager {
 	}
 }
 
+func (lvcsManager *LVCSManager) LVCSExists() (bool, error) {
+	initMan, ok := lvcsManager.lvcsMan["init"].(*utils.LVCSInitManager)
+	if !ok {
+		return false, errors.New("failed to check lvcs existence")
+	}
+	// AlreadyInit() == LVCSExists()
+	return initMan.AlreadyInit(), nil
+}
+
 func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (string, error) {
 	switch command {
-	case "hash-object":
+	case "hashObject":
+		// 1 subcommand
 		// return oid if no error
 		fileHashIOMan, ok := lvcsManager.lvcsMan["fileHashIO"].(*utils.LVCSFileHashIOManager)
 		if !ok {
-			return "", errors.New("Failed to execute hash-object")
+			return "", errors.New("failed to execute hash-object")
 		}
 		if len(subcommands) != 1 {
 			return "", errors.New("number of argumment not correct, expected a path to a file but not found")
@@ -47,11 +58,12 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 			return "", err
 		}
 		return oid, nil
-	case "cat-file":
+	case "catFile":
+		// 1 subcommand
 		// return file content if no error
 		fileHashIOMan, ok := lvcsManager.lvcsMan["fileHashIO"].(*utils.LVCSFileHashIOManager)
 		if !ok {
-			return "", errors.New("Failed to execute cat-file")
+			return "", errors.New("failed to execute cat-file")
 		}
 		if len(subcommands) != 1 {
 			return "", errors.New("number of argumment not correct, expected an oid but not found")
@@ -62,10 +74,11 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 		}
 		return content, nil
 	case "add":
+		// at least 1 subcommand
 		// return success messaage if no error
 		addMan, ok := lvcsManager.lvcsMan["add"].(*utils.LVCSAddManager) // change the receiver later
 		if !ok {
-			return "", errors.New("Failed to execute add")
+			return "", errors.New("failed to execute add")
 		}
 		if len(subcommands) < 1 {
 			return "", errors.New("number of argumment not correct, expected at least one path input but not found")
@@ -76,12 +89,20 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 				return "", errors.New("failed to add:" + file)
 			}
 		}
-		return string("added all of the files success"), nil
+		trackedFiles := "Added files:\n"
+		for i, fileName := range subcommands {
+			trackedFiles += strconv.Itoa(i+1) + ":" + fileName + "\n"
+		}
+		return trackedFiles, nil
 	case "init":
+		// 0 subcommand
+		if len(subcommands) != 0 {
+			return "", errors.New("too many args for init")
+		}
 		// return success message if no error
 		initMan, ok := lvcsManager.lvcsMan["init"].(*utils.LVCSInitManager)
 		if !ok {
-			return "", errors.New("Failed to execute init")
+			return "", errors.New("failed to execute init")
 		}
 		err := initMan.Init()
 		if err != nil {

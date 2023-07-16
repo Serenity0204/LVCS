@@ -49,7 +49,7 @@ func (lvcsAdd *LVCSAddManager) keyExists(target string) (bool, error) {
 		// Split the line by white space
 		fields := strings.Fields(line)
 		// Invalid line format, skip to the next line
-		if len(fields) != 3 {
+		if len(fields) != 2 {
 			continue
 		}
 
