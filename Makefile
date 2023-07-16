@@ -1,18 +1,15 @@
-.PHONY: build run
+.PHONY: build test init add design.txt command.txt clean
 
 build:
-	go build -o build main.go
+	go build
 
-test-utils:
-	cd internal/utils_test && go test -v
-test-man:
-	cd internal && go test -v
-# ## without argument
-# run:
-# 	./build
+test:
+	cd internal/utils_test && go test -v && cd .. && go test -v
 
-## with argument
-run:
-	./build $(filter-out $@,$(MAKECMDGOALS))
-%:
-	@:
+ifeq ($(OS),Windows_NT)
+clean:
+	del /f LVCS.exe
+else
+clean:
+	rm -f LVCS
+endif
