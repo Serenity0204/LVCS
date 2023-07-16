@@ -9,3 +9,10 @@ go mod tidy
     make build
     make run
     make test
+
+// install
+    go install github.com/Serenity0204/LVCS@latest
+
+// uninstall
+    windows: del %GOPATH%\bin\LVCS.exe
+    linux/macOS: rm $GOPATH/bin/LVCS
