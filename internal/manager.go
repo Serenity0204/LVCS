@@ -10,7 +10,7 @@ type LVCSManager struct {
 	lvcsMan map[string]interface{}
 }
 
-// NewLVCSAddManager creates a new LVCSAdd instance
+// NewLVCSManager creates a new LVCSAdd instance
 func NewLVCSManager(lvcsPath string) *LVCSManager {
 	manager := make(map[string]interface{})
 	addMan := utils.NewLVCSAddManager(lvcsPath)
