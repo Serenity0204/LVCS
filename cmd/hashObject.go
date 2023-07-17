@@ -1,11 +1,12 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -14,14 +15,28 @@ import (
 var hashObjectCmd = &cobra.Command{
 	Use:   "hashObject",
 	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("hashObject called")
+		file, err := os.Open("emoji.txt")
+		if err != nil {
+			fmt.Println("Error opening file:", err)
+			return
+		}
+		defer file.Close()
+
+		// Create a scanner to read the file line by line
+		scanner := bufio.NewScanner(file)
+
+		// Read and print each line
+		for scanner.Scan() {
+			line := scanner.Text()
+			fmt.Println(line)
+		}
+
+		// Check for any scanning errors
+		if err := scanner.Err(); err != nil {
+			fmt.Println("Error reading file:", err)
+		}
 	},
 }
 

@@ -16,3 +16,6 @@ go mod tidy
 // uninstall
     windows: del %GOPATH%\bin\LVCS.exe
     linux/macOS: rm $GOPATH/bin/LVCS
+
+ASCII art:
+https://emojicombos.com/pusheen
