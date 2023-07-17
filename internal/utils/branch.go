@@ -71,11 +71,26 @@ func (lvcsBranch *LVCSBranchManager) CheckoutBranch(branchName string) error {
 	return nil
 }
 
-func (lvcsBranch *LVCSBranchManager) GetCurrentBranch(branchName string) (string, error) {
+func (lvcsBranch *LVCSBranchManager) GetCurrentBranch() (string, error) {
 	content, err := os.ReadFile(lvcsBranch.lvcsCurrentRefPath)
 	if err != nil {
 		return "", err
 	}
 	currentBranch := strings.Split(string(content), "\n")[0]
 	return currentBranch, nil
+}
+
+func (lvcsBranch *LVCSBranchManager) GetAllBranch() ([]string, error) {
+	branches := []string{}
+	dirEntries, err := os.ReadDir(lvcsBranch.lvcsCommitPath)
+	if err != nil {
+		return []string{}, err
+	}
+	for _, dirEntry := range dirEntries {
+		if !dirEntry.IsDir() {
+			continue
+		}
+		branches = append(branches, dirEntry.Name())
+	}
+	return branches, nil
 }

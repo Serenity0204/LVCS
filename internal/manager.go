@@ -113,10 +113,88 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 		// TBD
 		return "", nil
 	case "branch":
-		// TBD
-		return "", nil
+		// 0, or 2 sub commands
+		branchMan, ok := lvcsManager.lvcsMan["branch"].(*utils.LVCSBranchManager)
+		if !ok {
+			return "", errors.New("failed to execute branch")
+		}
+
+		// list all the branches
+		if len(subcommands) == 0 {
+			branches, err := branchMan.GetAllBranch()
+			if err != nil {
+				return "", errors.New("failed to retrieve all of the branches")
+			}
+			allBranchNames := "All branches:"
+			for i, branchName := range branches {
+				allBranchNames += strconv.Itoa(i+1) + ":" + branchName + "\n"
+			}
+			return allBranchNames, nil
+		}
+
+		if len(subcommands) == 2 {
+			branchName := subcommands[1]
+			exists := branchMan.BranchExists(branchName)
+			// check if branch exists
+			if subcommands[0] == "-exists" {
+				return strconv.FormatBool(exists), nil
+			}
+			// create branch
+			if subcommands[0] == "-create" {
+				if exists {
+					return "", errors.New("branch:" + branchName + " already exists")
+				}
+				err := branchMan.CreateBranch(branchName)
+				if err != nil {
+					return "", err
+				}
+				return string("Create branch:" + branchName + " success"), nil
+			}
+			// checkout branch
+			if subcommands[0] == "-checkout" {
+				if !exists {
+					return "", errors.New("branch:" + branchName + " does not exist")
+				}
+				err := branchMan.CheckoutBranch(branchName)
+				if err != nil {
+					return "", err
+				}
+				return string("Checkout branch:" + branchName + " success"), nil
+			}
+			// get current branch
+			if subcommands[0] == "-current" {
+				curBranch, err := branchMan.GetCurrentBranch()
+				if err != nil {
+					return "", err
+				}
+				return string("Current branch is:" + curBranch), nil
+			}
+			// delete branch
+			if subcommands[0] == "-delete" {
+				// cannot delete branch that DNE
+				if !exists {
+					return "", errors.New("branch:" + branchName + " does not exist")
+				}
+				// cannot delete current branch
+				curBranch, err := branchMan.GetCurrentBranch()
+				if err != nil {
+					return "", err
+				}
+				if branchName == curBranch {
+					return "", errors.New("cannot delete current working branch:" + branchName)
+				}
+				err = branchMan.DeleteBranch(branchName)
+				if err != nil {
+					return "", err
+				}
+				return string("Delete branch:" + branchName + " success"), nil
+			}
+			// if 2 args and it's not one of the above then it's an error
+			return "", errors.New("unknown subcommands:" + subcommands[0])
+		}
+		return "", errors.New("invalid:number of arguments")
 	default:
-		// TBD
-		return "", nil
+		// unknown command
+		return "", errors.New("unknown command:" + command)
 	}
 }
