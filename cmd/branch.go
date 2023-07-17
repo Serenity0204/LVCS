@@ -6,35 +6,43 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/Serenity0204/LVCS/internal"
 	"github.com/spf13/cobra"
 )
 
 // branchCmd represents the branch command
 var branchCmd = &cobra.Command{
 	Use:   "branch",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "lvcs branching",
+	Long:  `lvcs branching that supports create, delete, checkout, check if exists, get current branch, get all exising branches functions`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("branch called")
+		dir, err := os.Getwd()
+		dir += "\\.lvcs"
+		if err != nil {
+			fmt.Println("Error retrieving .lvcs directory at:", dir)
+			return
+		}
+		lvcsMan := internal.NewLVCSManager(dir)
+		exists, err := lvcsMan.LVCSExists()
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		if !exists {
+			fmt.Println(".lvcs directory does not exist, branching failed")
+			return
+		}
+		msg, err := lvcsMan.Execute("branch", args)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		fmt.Println(msg)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(branchCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// branchCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// branchCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

@@ -125,22 +125,32 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 			if err != nil {
 				return "", errors.New("failed to retrieve all of the branches")
 			}
-			allBranchNames := "All branches:"
+			allBranchNames := "All branches:\n"
 			for i, branchName := range branches {
 				allBranchNames += strconv.Itoa(i+1) + ":" + branchName + "\n"
 			}
 			return allBranchNames, nil
 		}
-
+		if len(subcommands) == 1 {
+			// get current branch
+			if subcommands[0] == "current" {
+				curBranch, err := branchMan.GetCurrentBranch()
+				if err != nil {
+					return "", err
+				}
+				return string("Current branch is:" + curBranch), nil
+			}
+			return "", errors.New("invalid:number of arguments")
+		}
 		if len(subcommands) == 2 {
 			branchName := subcommands[1]
 			exists := branchMan.BranchExists(branchName)
 			// check if branch exists
-			if subcommands[0] == "-exists" {
+			if subcommands[0] == "exists" {
 				return strconv.FormatBool(exists), nil
 			}
 			// create branch
-			if subcommands[0] == "-create" {
+			if subcommands[0] == "create" {
 				if exists {
 					return "", errors.New("branch:" + branchName + " already exists")
 				}
@@ -151,7 +161,7 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 				return string("Create branch:" + branchName + " success"), nil
 			}
 			// checkout branch
-			if subcommands[0] == "-checkout" {
+			if subcommands[0] == "checkout" {
 				if !exists {
 					return "", errors.New("branch:" + branchName + " does not exist")
 				}
@@ -161,16 +171,8 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 				}
 				return string("Checkout branch:" + branchName + " success"), nil
 			}
-			// get current branch
-			if subcommands[0] == "-current" {
-				curBranch, err := branchMan.GetCurrentBranch()
-				if err != nil {
-					return "", err
-				}
-				return string("Current branch is:" + curBranch), nil
-			}
 			// delete branch
-			if subcommands[0] == "-delete" {
+			if subcommands[0] == "delete" {
 				// cannot delete branch that DNE
 				if !exists {
 					return "", errors.New("branch:" + branchName + " does not exist")
