@@ -1,0 +1,13 @@
+can restructure commits into a tree way by still having the version numbers as linear, but can be connected to other versions, so can be
+
+V1, V2, V3, V4, V5, V6, .....
+
+V1 --->V2
+   |
+   |
+   --->V3 --->V4 --->V6
+          |
+          |
+          --->V5
+
+And then do serialize/deserialize of nary tree
