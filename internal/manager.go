@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/Serenity0204/LVCS/internal/ui"
 	"github.com/Serenity0204/LVCS/internal/utils"
 )
 
@@ -38,6 +39,15 @@ func (lvcsManager *LVCSManager) LVCSExists() (bool, error) {
 	}
 	// AlreadyInit() == LVCSExists()
 	return initMan.AlreadyInit(), nil
+}
+
+func (lvcsManager *LVCSManager) GetRandomASCIIArt() (string, error) {
+	ascii := ui.NewASCIIArtGenerator()
+	art, err := ascii.GetRandASCIIArt()
+	if err != nil {
+		return "", err
+	}
+	return art, nil
 }
 
 func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (string, error) {

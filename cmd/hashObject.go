@@ -4,10 +4,10 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 
+	"github.com/Serenity0204/LVCS/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -17,26 +17,28 @@ var hashObjectCmd = &cobra.Command{
 	Short: "A brief description of your command",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		file, err := os.Open("emoji.txt")
+		dir, err := os.Getwd()
+		dir += "\\.lvcs"
 		if err != nil {
-			fmt.Println("Error opening file:", err)
+			fmt.Println("error retrieving .lvcs directory at:", dir)
 			return
 		}
-		defer file.Close()
-
-		// Create a scanner to read the file line by line
-		scanner := bufio.NewScanner(file)
-
-		// Read and print each line
-		for scanner.Scan() {
-			line := scanner.Text()
-			fmt.Println(line)
+		lvcsMan := internal.NewLVCSManager(dir)
+		exists, err := lvcsMan.LVCSExists()
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
 		}
-
-		// Check for any scanning errors
-		if err := scanner.Err(); err != nil {
-			fmt.Println("Error reading file:", err)
+		if !exists {
+			fmt.Println(".lvcs directory does not exist, hashObject failed")
+			return
 		}
+		art, err := lvcsMan.GetRandomASCIIArt()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(art)
 	},
 }
 

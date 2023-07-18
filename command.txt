@@ -18,4 +18,4 @@ go mod tidy
     linux/macOS: rm $GOPATH/bin/LVCS
 
 ASCII art:
-https://emojicombos.com/pusheen
+https://textfancy.com/text-art/
