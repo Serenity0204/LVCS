@@ -33,7 +33,18 @@ var hashObjectCmd = &cobra.Command{
 			fmt.Println(".lvcs directory does not exist, hashObject failed")
 			return
 		}
-
+		msg, err := lvcsMan.Execute("hashObject", args)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		art, err := lvcsMan.GetRandomASCIIArt()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(art + "\n\n")
+		fmt.Println(msg)
 	},
 }
 
