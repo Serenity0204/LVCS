@@ -39,6 +39,12 @@ var branchCmd = &cobra.Command{
 			fmt.Println("Error:", err)
 			return
 		}
+		art, err := lvcsMan.GetRandomASCIIArt()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println(art + "\n\n")
 		fmt.Println(msg)
 	},
 }

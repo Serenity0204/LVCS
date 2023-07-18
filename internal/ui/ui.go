@@ -15,7 +15,7 @@ type ASCIIArtGenerator struct {
 }
 
 func NewASCIIArtGenerator() *ASCIIArtGenerator {
-	const n int = 6
+	const n int = 5
 	const prefix string = "ASCIIArts/ascii"
 	const postfix string = ".txt"
 	asciiMap := make(map[int]string)
@@ -32,8 +32,8 @@ func NewASCIIArtGenerator() *ASCIIArtGenerator {
 
 func (ascii *ASCIIArtGenerator) GetRandASCIIArt() (string, error) {
 	rand.Seed(time.Now().UnixNano())
-	// Generate a random number from 1 to 6
-	randomNumber := rand.Intn(6) + 1
+	// Generate a random number from 1 to 5
+	randomNumber := rand.Intn(5) + 1
 	path, ok := ascii.ASCIIArtMap[randomNumber]
 	if !ok {
 		return "", errors.New("failed to read ASCII file")

@@ -33,25 +33,10 @@ var hashObjectCmd = &cobra.Command{
 			fmt.Println(".lvcs directory does not exist, hashObject failed")
 			return
 		}
-		art, err := lvcsMan.GetRandomASCIIArt()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Println(art)
+
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(hashObjectCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// hashObjectCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// hashObjectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
