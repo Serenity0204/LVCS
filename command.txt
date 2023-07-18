@@ -19,3 +19,4 @@ go mod tidy
 
 ASCII art:
 https://textfancy.com/text-art/
+https://www.asciiart.eu/
