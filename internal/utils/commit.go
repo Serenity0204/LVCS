@@ -314,6 +314,9 @@ func (lvcsCommit *LVCSCommitManager) CommitTree() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	if tree.GetNaryTreeRoot() == nil {
+		return "Empty", nil
+	}
 	return tree.NaryTreeString(), nil
 }
 
