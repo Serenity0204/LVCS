@@ -3,22 +3,27 @@ package utils
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/Serenity0204/LVCS/internal/models"
 )
 
 type LVCSCommitManager struct {
 	lvcsPath       string
 	lvcsCommitPath string
 	lvcsStagePath  string
+	lvcsTreePath   string
 }
 
 // creates a new LVCSCommit instance
 func NewLVCSCommitManager(lvcsPath string) *LVCSCommitManager {
 	return &LVCSCommitManager{
 		lvcsPath:       lvcsPath,
+		lvcsTreePath:   lvcsPath + "/trees",
 		lvcsCommitPath: lvcsPath + "/commits",
 		lvcsStagePath:  lvcsPath + "/stage.txt",
 	}
@@ -107,6 +112,82 @@ func (lvcsCommit *LVCSCommitManager) Commit(branchName string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (lvcsCommit *LVCSCommitManager) CommitT() error {
+	// default is master for branchName
+	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
+	curBranchName, err := lvcsBranch.GetCurrentBranch()
+	if err != nil {
+		return err
+	}
+
+	// get previous tree
+	tree := models.NewNaryTree()
+	// read tree content
+	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
+	content, err := os.ReadFile(treePath)
+	if err != nil {
+		return err
+	}
+	treeData := string(content)
+
+	tree.Deserialize(treeData)
+
+	// get the latest version number
+	version, err := lvcsCommit.getLatestVersion(curBranchName)
+	if err != nil {
+		return err
+	}
+	curVersion := version + 1
+
+	// create the commit record
+	err = lvcsCommit.createNewCommitRecord(curBranchName, curVersion)
+	if err != nil {
+		return err
+	}
+
+	// insert
+	// get parent and cur version string
+
+	curVersionStr := "v" + strconv.Itoa(curVersion)
+
+	if version != -1 {
+		// get parent node if parent is not -1
+		parentVersionStr := "v" + strconv.Itoa(version)
+		parent, err := tree.GetNode(parentVersionStr)
+		if err != nil {
+			return err
+		}
+		// insert cur under parent
+		err = tree.Insert(parent, curVersionStr)
+		if err != nil {
+			return err
+		}
+	} else {
+		err = tree.Insert(nil, curVersionStr)
+		if err != nil {
+			return err
+		}
+	}
+	// serialize
+	newTreeData, err := tree.Serialize()
+	if err != nil {
+		return err
+	}
+
+	// write it back to file
+	treeFile, err := os.OpenFile(treePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer treeFile.Close()
+	_, err = treeFile.WriteString(newTreeData)
+	if err != nil {
+		return err
+	}
+	fmt.Println(tree.NaryTreeString())
 	return nil
 }
 
