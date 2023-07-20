@@ -10,29 +10,27 @@ type treeNode struct {
 	Children []*treeNode
 }
 
-type DirectoryTree struct {
-	lvcsPath string
-	root     *treeNode
+type NaryTree struct {
+	root *treeNode
 }
 
-func NewDirectoryTree(lvcsPath string) *DirectoryTree {
-	return &DirectoryTree{
-		lvcsPath: lvcsPath,
-		root:     nil,
+func NewNaryTree() *NaryTree {
+	return &NaryTree{
+		root: nil,
 	}
 }
 
-func (tree *DirectoryTree) GetDirectoryTreeRoot() *treeNode {
+func (tree *NaryTree) GetNaryTreeRoot() *treeNode {
 	return tree.root
 }
 
-func (tree *DirectoryTree) DirectoryTreeString() string {
+func (tree *NaryTree) NaryTreeString() string {
 	treeStr := "all commits:\n"
-	treeStr += tree.buildDirectoryTreeString(tree.root, "", true, true)
+	treeStr += tree.buildNaryTreeString(tree.root, "", true, true)
 	return treeStr
 }
 
-func (tree *DirectoryTree) buildDirectoryTreeString(node *treeNode, prefix string, isLastChild bool, isRoot bool) string {
+func (tree *NaryTree) buildNaryTreeString(node *treeNode, prefix string, isLastChild bool, isRoot bool) string {
 	treeString := ""
 
 	if !isRoot {
@@ -50,13 +48,13 @@ func (tree *DirectoryTree) buildDirectoryTreeString(node *treeNode, prefix strin
 	childCount := len(node.Children)
 	for i, child := range node.Children {
 		isLast := i == childCount-1
-		treeString += tree.buildDirectoryTreeString(child, prefix, isLast, false)
+		treeString += tree.buildNaryTreeString(child, prefix, isLast, false)
 	}
 
 	return treeString
 }
 
-func (tree *DirectoryTree) Insert(parent *treeNode, value string) error {
+func (tree *NaryTree) Insert(parent *treeNode, value string) error {
 	// if empty tree
 	if tree.root == nil {
 		tree.root = &treeNode{Value: "v0"}
@@ -71,7 +69,7 @@ func (tree *DirectoryTree) Insert(parent *treeNode, value string) error {
 }
 
 // Serialize serializes an N-ary tree to a JSON string
-func (tree *DirectoryTree) Serialize() (string, error) {
+func (tree *NaryTree) Serialize() (string, error) {
 	if tree.root == nil {
 		return "", nil
 	}
@@ -82,11 +80,11 @@ func (tree *DirectoryTree) Serialize() (string, error) {
 	return string(data), nil
 }
 
-func (tree *DirectoryTree) GetNode(val string) (*treeNode, error) {
+func (tree *NaryTree) GetNode(val string) (*treeNode, error) {
 	return tree.findNode(tree.root, val)
 }
 
-func (tree *DirectoryTree) findNode(node *treeNode, val string) (*treeNode, error) {
+func (tree *NaryTree) findNode(node *treeNode, val string) (*treeNode, error) {
 	if node == nil {
 		return nil, errors.New("node not found")
 	}
@@ -106,21 +104,21 @@ func (tree *DirectoryTree) findNode(node *treeNode, val string) (*treeNode, erro
 }
 
 // Deserialize deserializes a JSON string to an N-ary tree
-func (tree *DirectoryTree) Deserialize(data string) error {
+func (tree *NaryTree) Deserialize(data string) error {
 	var root treeNode
 	err := json.Unmarshal([]byte(data), &root)
 	if err != nil {
 		return err
 	}
-	tree.root = tree.copyDirectoryTree(&root)
+	tree.root = tree.copyNaryTree(&root)
 	return nil
 }
 
-func (tree *DirectoryTree) copyDirectoryTree(node *treeNode) *treeNode {
+func (tree *NaryTree) copyNaryTree(node *treeNode) *treeNode {
 	copyNode := &treeNode{Value: node.Value}
 	copyNode.Children = make([]*treeNode, len(node.Children))
 	for i, child := range node.Children {
-		copyNode.Children[i] = tree.copyDirectoryTree(child)
+		copyNode.Children[i] = tree.copyNaryTree(child)
 	}
 	return copyNode
 }

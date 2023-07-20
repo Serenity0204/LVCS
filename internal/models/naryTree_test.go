@@ -1,23 +1,19 @@
 package models
 
 import (
-	// "encoding/json"
 	"fmt"
 	"testing"
 )
 
-const lvcsModel string = "../../.lvcs"
 const debug bool = false
 
-func TestDirectoryTree(t *testing.T) {
-	// Test NewDirectoryTree
-	tree := NewDirectoryTree(lvcsModel)
+func TestNaryTree(t *testing.T) {
+	tree := NewNaryTree()
 	if tree.root != nil {
 		t.Errorf("expected root to be nil but it's not nil")
 	}
 
-	// Test GetDirectoryTreeRoot
-	root := tree.GetDirectoryTreeRoot()
+	root := tree.GetNaryTreeRoot()
 	if root != nil {
 		t.Errorf("GetDirectoryTreeRoot failed. Expected nil root for empty tree. Got root='%v'", root)
 	}
@@ -28,7 +24,7 @@ func TestDirectoryTree(t *testing.T) {
 		t.Errorf("Insert failed. Expected error for nil parent, but got nil.")
 	}
 
-	parent := tree.GetDirectoryTreeRoot()
+	parent := tree.GetNaryTreeRoot()
 	err = tree.Insert(parent, "v1")
 	if err != nil {
 		t.Errorf("Insert failed. Expected no error, but got: %v", err)
@@ -72,7 +68,7 @@ func TestDirectoryTree(t *testing.T) {
 		t.Errorf("Deserialize failed. Expected no error, but got: %v", err)
 	}
 	if debug {
-		treeString := tree.DirectoryTreeString()
+		treeString := tree.NaryTreeString()
 		fmt.Println(treeString)
 	}
 }
