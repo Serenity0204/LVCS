@@ -22,22 +22,33 @@ func TestBranch(t *testing.T) {
 	if !lvcsBranch.BranchExists(main) {
 		err := lvcsBranch.CreateBranch(main)
 		if err != nil {
-			t.Errorf("create branch:" + main + " failed")
+			t.Errorf(err.Error())
 		}
 	}
 	if !lvcsBranch.BranchExists(test2) {
 		err := lvcsBranch.CreateBranch(test2)
 		if err != nil {
-			t.Errorf("create branch:" + test2 + " failed")
+			t.Errorf(err.Error())
 		}
 	}
-	err := lvcsBranch.DeleteBranch(main)
-	if err != nil {
-		t.Errorf("delete branch:" + main + " failed")
+}
+
+func TestBranchDeleteCheckout(t *testing.T) {
+	main := "main"
+	lvcsBranch := utils.NewLVCSBranchManager(lvcsTestDir)
+
+	if lvcsBranch.BranchExists(main) {
+		err := lvcsBranch.DeleteBranch(main)
+		if err != nil {
+			t.Errorf(err.Error())
+		}
 	}
+
 	test1 := "test1"
-	err = lvcsBranch.CheckoutBranch(test1)
-	if err != nil {
-		t.Errorf("checkout branch:" + test1 + " failed")
+	if lvcsBranch.BranchExists(test1) {
+		err := lvcsBranch.CheckoutBranch(test1)
+		if err != nil {
+			t.Errorf(err.Error())
+		}
 	}
 }

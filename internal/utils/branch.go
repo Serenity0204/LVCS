@@ -12,6 +12,7 @@ type LVCSBranchManager struct {
 	lvcsCommitPath     string
 	lvcsStagePath      string
 	lvcsCurrentRefPath string
+	lvcsTreePath       string
 }
 
 // creates a new LVCSCommit instance
@@ -19,6 +20,7 @@ func NewLVCSBranchManager(lvcsPath string) *LVCSBranchManager {
 	return &LVCSBranchManager{
 		lvcsPath:           lvcsPath,
 		lvcsCommitPath:     lvcsPath + "/commits",
+		lvcsTreePath:       lvcsPath + "/trees",
 		lvcsStagePath:      lvcsPath + "/stage.txt",
 		lvcsCurrentRefPath: lvcsPath + "/currentRef.txt",
 	}
@@ -32,15 +34,25 @@ func (lvcsBranch *LVCSBranchManager) BranchExists(branchName string) bool {
 
 func (lvcsBranch *LVCSBranchManager) CreateBranch(branchName string) error {
 	newBranchPath := lvcsBranch.lvcsCommitPath + "/" + branchName
+	newTreePath := lvcsBranch.lvcsTreePath + "/" + branchName + "_tree.txt"
 	err := os.Mkdir(newBranchPath, 0755)
 	if err != nil {
 		return errors.New("failed to create branch folder:" + branchName)
 	}
+	file, err := os.Create(newTreePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
 	return nil
 }
 
 func (lvcsBranch *LVCSBranchManager) DeleteBranch(branchName string) error {
 	err := os.RemoveAll(lvcsBranch.lvcsCommitPath + "/" + branchName)
+	if err != nil {
+		return err
+	}
+	err = os.Remove(lvcsBranch.lvcsTreePath + "/" + branchName + "_tree.txt")
 	if err != nil {
 		return err
 	}
@@ -57,6 +69,9 @@ func (lvcsBranch *LVCSBranchManager) CheckoutBranch(branchName string) error {
 	// get latest version
 	lvcsCommit := NewLVCSCommitManager(lvcsBranch.lvcsPath)
 	version, err := lvcsCommit.getLatestVersion(branchName)
+	if err != nil {
+		return err
+	}
 	versionStr := ""
 	if version != -1 {
 		versionStr += "v" + strconv.Itoa(version)

@@ -11,6 +11,7 @@ type LVCSInitManager struct {
 	lvcsCommitPath     string
 	lvcsStagePath      string
 	lvcsCurrentRefPath string
+	lvcsTreePath       string
 }
 
 // creates a new LVCSInit instance
@@ -19,6 +20,7 @@ func NewLVCSInitManager(lvcsPath string) *LVCSInitManager {
 		lvcsPath:           lvcsPath,
 		lvcsObjPath:        lvcsPath + "/objects",
 		lvcsCommitPath:     lvcsPath + "/commits",
+		lvcsTreePath:       lvcsPath + "/trees",
 		lvcsStagePath:      lvcsPath + "/stage.txt",
 		lvcsCurrentRefPath: lvcsPath + "/currentRef.txt",
 	}
@@ -55,12 +57,25 @@ func (lvcsInit *LVCSInitManager) Init() error {
 		return errors.New("failed to create the default branch: .lvcs/commits/master")
 	}
 
-	_, err = os.Create(lvcsInit.lvcsStagePath)
+	// create trees
+	err = os.Mkdir(lvcsInit.lvcsTreePath, 0755)
+	if err != nil {
+		return errors.New("failed to create .lvcs/trees")
+	}
+	// create default branch tree
+	file, err := os.Create(lvcsInit.lvcsTreePath + "/master_tree.txt")
+	if err != nil {
+		return errors.New("failed to create the default branch: .lvcs/trees/master_tree.txt")
+	}
+	defer file.Close()
+
+	file, err = os.Create(lvcsInit.lvcsStagePath)
 	if err != nil {
 		return errors.New("failed to create .lvcs/stage.txt")
 	}
+	file.Close()
 
-	file, err := os.OpenFile(lvcsInit.lvcsCurrentRefPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	file, err = os.OpenFile(lvcsInit.lvcsCurrentRefPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
 		return errors.New("failed to open .lvcs/currentRef.txt")
 	}

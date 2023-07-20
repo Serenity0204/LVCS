@@ -9,8 +9,8 @@ test:
 
 ifeq ($(OS),Windows_NT)
 clean:
-	del /f LVCS.exe
+	del /f LVCS.exe && rd /s /q ".lvcs" && rd /s /q ".lvcs_test"
 else
 clean:
-	rm -f LVCS
+	rm -f LVCS && rm -rf ".lvcs" && rm -rf ".lvcs_test"
 endif
