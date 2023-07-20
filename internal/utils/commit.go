@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"bytes"
 	"errors"
 	"io"
@@ -20,6 +21,82 @@ func NewLVCSCommitManager(lvcsPath string) *LVCSCommitManager {
 	return &LVCSCommitManager{
 		lvcsBaseManager: newLVCSBaseManager(lvcsPath),
 	}
+}
+
+func (lvcsCommit *LVCSCommitManager) versionExists(branchName string, version string) (bool, error) {
+	files, err := os.ReadDir(lvcsCommit.lvcsCommitPath + "/" + branchName)
+	if err != nil {
+		return false, err
+	}
+	for _, file := range files {
+		// if it's not a file then it's error
+		if file.IsDir() {
+			return false, errors.New("read A Dir Inside commits")
+		}
+		// it's a file
+		fileName := file.Name()
+		// check for error
+		if !strings.HasPrefix(fileName, "v") {
+			return false, errors.New("wrong version number")
+		}
+		versionStr := strings.TrimSuffix(fileName, ".txt")
+		if version == versionStr {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+func (lvcsCommit *LVCSCommitManager) GetLatestVersion() (string, error) {
+	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
+	curBranchName, err := lvcsBranch.GetCurrentBranch()
+	if err != nil {
+		return "", err
+	}
+	ver, err := lvcsCommit.getLatestVersion(curBranchName)
+	if err != nil {
+		return "", err
+	}
+	if ver == -1 {
+		return string("HEAD"), nil
+	}
+	return string("v" + strconv.Itoa(ver)), nil
+}
+
+func (lvcsCommit *LVCSCommitManager) GetCurrentVersion() (string, error) {
+	version, err := lvcsCommit.getCurrentVersion()
+	if err != nil {
+		return "", err
+	}
+	if version == -1 {
+		return string("HEAD"), nil
+	}
+	return string("v" + strconv.Itoa(version)), nil
+}
+
+func (lvcsCommit *LVCSCommitManager) getCurrentVersion() (int, error) {
+	file, err := os.Open(lvcsCommit.lvcsCurrentRefPath)
+	if err != nil {
+		return -1, err
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	success := scanner.Scan()
+	if !success {
+		return -1, errors.New("scanned failed")
+	}
+	success = scanner.Scan()
+	if !success {
+		return -1, errors.New("scanned failed")
+	}
+	curVersion := scanner.Text()
+	if curVersion == "HEAD" {
+		return -1, nil
+	}
+	version, err := strconv.Atoi(strings.TrimPrefix(curVersion, "v"))
+	if err != nil {
+		return -1, err
+	}
+	return version, nil
 }
 
 func (lvcsCommit *LVCSCommitManager) getLatestVersion(branchName string) (int, error) {
@@ -84,35 +161,13 @@ func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, ve
 	return nil
 }
 
-func (lvcsCommit *LVCSCommitManager) Commit(branchName string) error {
-	// default is master for branchName
-	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
-	check := lvcsBranch.BranchExists(branchName)
-	// branch does not exist
-	if !check {
-		return errors.New("Branch:" + branchName + " does not exist")
-	}
-
-	// get the latest version number
-	version, err := lvcsCommit.getLatestVersion(branchName)
-	if err != nil {
-		return err
-	}
-	curVersion := version + 1
-
-	// create the commit record
-	err = lvcsCommit.createNewCommitRecord(branchName, curVersion)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (lvcsCommit *LVCSCommitManager) CommitT() error {
+// commit will commit a new version under current version
+func (lvcsCommit *LVCSCommitManager) Commit() error {
 	// default is master for branchName
 	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
 	curBranchName, err := lvcsBranch.GetCurrentBranch()
 	if err != nil {
+
 		return err
 	}
 
@@ -122,21 +177,31 @@ func (lvcsCommit *LVCSCommitManager) CommitT() error {
 	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
 	content, err := os.ReadFile(treePath)
 	if err != nil {
+
 		return err
 	}
 	treeData := string(content)
 
-	tree.Deserialize(treeData)
+	err = tree.Deserialize(treeData)
+	if err != nil {
 
-	// get the latest version number
-	version, err := lvcsCommit.getLatestVersion(curBranchName)
+		return err
+	}
+
+	// get current curVersion
+	curVersion, err := lvcsCommit.getCurrentVersion()
 	if err != nil {
 		return err
 	}
-	curVersion := version + 1
+	// get the latest version number
+	latestVersion, err := lvcsCommit.getLatestVersion(curBranchName)
+	if err != nil {
+		return err
+	}
+	newVersion := latestVersion + 1
 
 	// create the commit record
-	err = lvcsCommit.createNewCommitRecord(curBranchName, curVersion)
+	err = lvcsCommit.createNewCommitRecord(curBranchName, newVersion)
 	if err != nil {
 		return err
 	}
@@ -144,11 +209,11 @@ func (lvcsCommit *LVCSCommitManager) CommitT() error {
 	// insert
 	// get parent and cur version string
 
-	curVersionStr := "v" + strconv.Itoa(curVersion)
+	curVersionStr := "v" + strconv.Itoa(newVersion)
 
-	if version != -1 {
+	if curVersion != -1 {
 		// get parent node if parent is not -1
-		parentVersionStr := "v" + strconv.Itoa(version)
+		parentVersionStr := "v" + strconv.Itoa(curVersion)
 		parent, err := tree.GetNode(parentVersionStr)
 		if err != nil {
 			return err
@@ -167,6 +232,7 @@ func (lvcsCommit *LVCSCommitManager) CommitT() error {
 	// serialize
 	newTreeData, err := tree.Serialize()
 	if err != nil {
+
 		return err
 	}
 
@@ -178,9 +244,77 @@ func (lvcsCommit *LVCSCommitManager) CommitT() error {
 	defer treeFile.Close()
 	_, err = treeFile.WriteString(newTreeData)
 	if err != nil {
+
+		return err
+	}
+
+	// update current ref
+	// default is master for branchName
+
+	file, err := os.OpenFile(lvcsCommit.lvcsCurrentRefPath, os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(curBranchName + "\n" + curVersionStr + "\n")
+	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (lvcsCommit *LVCSCommitManager) SwitchCommitVersion(version string) error {
+	// default is master for branchName
+	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
+	curBranchName, err := lvcsBranch.GetCurrentBranch()
+	if err != nil {
+		return err
+	}
+	exist, err := lvcsCommit.versionExists(curBranchName, version)
+
+	if err != nil {
+		return err
+	}
+	if !exist {
+		return errors.New("version:" + version + " does not exist")
+	}
+
+	file, err := os.OpenFile(lvcsCommit.lvcsCurrentRefPath, os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(curBranchName + "\n" + version + "\n")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (lvcsCommit *LVCSCommitManager) CommitTree() (string, error) {
+	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
+	curBranchName, err := lvcsBranch.GetCurrentBranch()
+	if err != nil {
+		return "", err
+	}
+
+	// get tree
+	tree := models.NewNaryTree()
+	// read tree content
+	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
+	content, err := os.ReadFile(treePath)
+	if err != nil {
+		return "", err
+	}
+	treeData := string(content)
+
+	err = tree.Deserialize(treeData)
+	if err != nil {
+		return "", err
+	}
+	return tree.NaryTreeString(), nil
 }
 
 // need to move this later too

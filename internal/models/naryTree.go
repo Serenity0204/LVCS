@@ -105,6 +105,9 @@ func (tree *NaryTree) findNode(node *treeNode, val string) (*treeNode, error) {
 
 // Deserialize deserializes a JSON string to an N-ary tree
 func (tree *NaryTree) Deserialize(data string) error {
+	if len(data) == 0 {
+		return nil
+	}
 	var root treeNode
 	err := json.Unmarshal([]byte(data), &root)
 	if err != nil {

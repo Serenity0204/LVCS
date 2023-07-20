@@ -7,8 +7,6 @@ import (
 	"github.com/Serenity0204/LVCS/internal/utils"
 )
 
-const isNew bool = true
-
 func TestCommit(t *testing.T) {
 	lvcsInit := utils.NewLVCSInitManager(lvcsTestDir)
 	if !lvcsInit.AlreadyInit() {
@@ -47,23 +45,8 @@ func TestCommit(t *testing.T) {
 
 	lvcsCommit := utils.NewLVCSCommitManager(lvcsTestDir)
 
-	if !isNew {
-		err = lvcsCommit.Commit(master)
-		if err != nil {
-			t.Errorf("failed to commit " + master)
-		}
-		err = lvcsCommit.Commit(test1)
-		if err != nil {
-			t.Errorf("failed to commit " + test1)
-		}
-	} else {
-		err = lvcsCommit.CommitT()
-		if err != nil {
-			t.Errorf(err.Error())
-		}
-		err = lvcsCommit.CommitT()
-		if err != nil {
-			t.Errorf(err.Error())
-		}
+	err = lvcsCommit.Commit()
+	if err != nil {
+		t.Errorf(err.Error())
 	}
 }

@@ -120,8 +120,60 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 		}
 		return string("Init .lvcs directory at:" + lvcsManager.lvcsPath + " success"), nil
 	case "commit":
-		// TBD
-		return "", nil
+		// 0, 1, or 2 subcommands
+		// commit
+		commitMan, ok := lvcsManager.lvcsMan["commit"].(*utils.LVCSCommitManager)
+		if !ok {
+			return "", errors.New("failed to execute commit")
+		}
+		if len(subcommands) == 0 {
+			err := commitMan.Commit()
+			if err != nil {
+				return "", err
+			}
+			return string("commit success"), nil
+		}
+
+		if len(subcommands) == 1 {
+			// commit latest
+			if subcommands[0] == "latest" {
+				latest, err := commitMan.GetLatestVersion()
+				if err != nil {
+					return "", err
+				}
+				return latest, nil
+			}
+			// commit current
+			if subcommands[0] == "current" {
+				current, err := commitMan.GetCurrentVersion()
+				if err != nil {
+					return "", err
+				}
+				return current, nil
+			}
+			// commit tree
+			if subcommands[0] == "tree" {
+				tree, err := commitMan.CommitTree()
+				if err != nil {
+					return "", err
+				}
+				return tree, nil
+			}
+			return "", errors.New("unknown subcommands:" + subcommands[0])
+		}
+		// commit switch <version number>
+		if len(subcommands) == 2 {
+			if subcommands[0] != "switch" {
+				return "", errors.New("unknown subcommands:" + subcommands[0])
+			}
+			err := commitMan.SwitchCommitVersion(subcommands[1])
+			if err != nil {
+				return "", err
+			}
+			return string("Switch to " + subcommands[1] + " success"), nil
+		}
+
+		return "", errors.New("invalid:number of arguments")
 	case "branch":
 		// 0, or 2 sub commands
 		branchMan, ok := lvcsManager.lvcsMan["branch"].(*utils.LVCSBranchManager)
@@ -150,7 +202,7 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 				}
 				return string("Current branch is:" + curBranch), nil
 			}
-			return "", errors.New("invalid:number of arguments")
+			return "", errors.New("unknown subcommands:" + subcommands[0])
 		}
 		if len(subcommands) == 2 {
 			branchName := subcommands[1]
