@@ -6,23 +6,13 @@ import (
 )
 
 type LVCSInitManager struct {
-	lvcsPath           string
-	lvcsObjPath        string
-	lvcsCommitPath     string
-	lvcsStagePath      string
-	lvcsCurrentRefPath string
-	lvcsTreePath       string
+	lvcsBaseManager
 }
 
 // creates a new LVCSInit instance
 func NewLVCSInitManager(lvcsPath string) *LVCSInitManager {
 	return &LVCSInitManager{
-		lvcsPath:           lvcsPath,
-		lvcsObjPath:        lvcsPath + "/objects",
-		lvcsCommitPath:     lvcsPath + "/commits",
-		lvcsTreePath:       lvcsPath + "/trees",
-		lvcsStagePath:      lvcsPath + "/stage.txt",
-		lvcsCurrentRefPath: lvcsPath + "/currentRef.txt",
+		lvcsBaseManager: newLVCSBaseManager(lvcsPath),
 	}
 }
 

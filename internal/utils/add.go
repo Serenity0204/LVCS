@@ -8,15 +8,13 @@ import (
 )
 
 type LVCSAddManager struct {
-	lvcsPath      string
-	lvcsStagePath string
+	lvcsBaseManager
 }
 
 // creates a new LVCSAdd instance
 func NewLVCSAddManager(lvcsPath string) *LVCSAddManager {
 	return &LVCSAddManager{
-		lvcsPath:      lvcsPath,
-		lvcsStagePath: lvcsPath + "/stage.txt",
+		lvcsBaseManager: newLVCSBaseManager(lvcsPath),
 	}
 }
 

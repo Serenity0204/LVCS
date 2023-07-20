@@ -8,21 +8,13 @@ import (
 )
 
 type LVCSBranchManager struct {
-	lvcsPath           string
-	lvcsCommitPath     string
-	lvcsStagePath      string
-	lvcsCurrentRefPath string
-	lvcsTreePath       string
+	lvcsBaseManager
 }
 
 // creates a new LVCSCommit instance
 func NewLVCSBranchManager(lvcsPath string) *LVCSBranchManager {
 	return &LVCSBranchManager{
-		lvcsPath:           lvcsPath,
-		lvcsCommitPath:     lvcsPath + "/commits",
-		lvcsTreePath:       lvcsPath + "/trees",
-		lvcsStagePath:      lvcsPath + "/stage.txt",
-		lvcsCurrentRefPath: lvcsPath + "/currentRef.txt",
+		lvcsBaseManager: newLVCSBaseManager(lvcsPath),
 	}
 }
 

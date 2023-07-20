@@ -10,15 +10,13 @@ import (
 )
 
 type LVCSFileHashIOManager struct {
-	lvcsPath    string
-	lvcsObjPath string
+	lvcsBaseManager
 }
 
 // creates a new LVCSInit instance
 func NewLVCSFileHashIOManager(lvcsPath string) *LVCSFileHashIOManager {
 	return &LVCSFileHashIOManager{
-		lvcsPath:    lvcsPath,
-		lvcsObjPath: lvcsPath + "/objects",
+		lvcsBaseManager: newLVCSBaseManager(lvcsPath),
 	}
 }
 

@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -13,19 +12,13 @@ import (
 )
 
 type LVCSCommitManager struct {
-	lvcsPath       string
-	lvcsCommitPath string
-	lvcsStagePath  string
-	lvcsTreePath   string
+	lvcsBaseManager
 }
 
 // creates a new LVCSCommit instance
 func NewLVCSCommitManager(lvcsPath string) *LVCSCommitManager {
 	return &LVCSCommitManager{
-		lvcsPath:       lvcsPath,
-		lvcsTreePath:   lvcsPath + "/trees",
-		lvcsCommitPath: lvcsPath + "/commits",
-		lvcsStagePath:  lvcsPath + "/stage.txt",
+		lvcsBaseManager: newLVCSBaseManager(lvcsPath),
 	}
 }
 
@@ -187,7 +180,6 @@ func (lvcsCommit *LVCSCommitManager) CommitT() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(tree.NaryTreeString())
 	return nil
 }
 
