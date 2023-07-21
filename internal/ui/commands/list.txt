@@ -10,7 +10,7 @@
     LVCS init
 -Stage:
     LVCS stage
-    LVCS stage add <path to file 1>, <path to file 2>, <path to file 3>, ....
+    LVCS stage add <path to file 1> <path to file 2> <path to file 3>, ....
     LVCS stage untrack
     LVCS stage untrack <path to file>
 -FileIO:

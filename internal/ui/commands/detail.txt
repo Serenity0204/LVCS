@@ -10,7 +10,7 @@
     LVCS init : will init the LVCS directory
 -Stage:
     LVCS stage : will show all of the staged content
-    LVCS add <path to file 1>, <path to file 2>, <path to file 3>, .... : will track and add the files to the stage
+    LVCS add <path to file 1> <path to file 2> <path to file 3> .... : will track and add the files to the stage
     LVCS stage untrack : will untrack all of the files in the stage
     LVCS stage untrack <path to file> : will untrack the input file in the stage
 -FileIO:
