@@ -11,9 +11,9 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "LVCS",
 	Short: "Little Version Control System",
-	Long:  `A Little Version Control System built in Golang Cobra with supporting init, add, commit, branch, hash-object, and cat-file operations`,
+	Long:  `A Little Version Control System built in Golang Cobra with supporting init, add, commit, branch, hashObject, and catFile operations`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Supported command:")
+		fmt.Println("type 'LVCS commands' to view all of the available commands or 'LVCS commands detail' to view the detail")
 	},
 }
 

@@ -11,8 +11,7 @@ import (
 // catFileCmd represents the catFile command
 var catFileCmd = &cobra.Command{
 	Use:   "catFile",
-	Short: "OID to file content",
-	Long:  `convert a given OID of a file to the file's actual content`,
+	Short: "Convert OID to file content",
 	Run: func(cmd *cobra.Command, args []string) {
 		dir, err := os.Getwd()
 		dir += "\\.lvcs"

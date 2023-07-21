@@ -11,8 +11,7 @@ import (
 // hashObjectCmd represents the hashObject command
 var hashObjectCmd = &cobra.Command{
 	Use:   "hashObject",
-	Short: "store a file as an object",
-	Long:  `store a file as an object by converting into OID`,
+	Short: "Store a file as an object by converting into OID",
 	Run: func(cmd *cobra.Command, args []string) {
 		dir, err := os.Getwd()
 		dir += "\\.lvcs"

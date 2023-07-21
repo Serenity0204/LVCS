@@ -11,8 +11,7 @@ import (
 // commandsCmd represents the help command
 var commandsCmd = &cobra.Command{
 	Use:   "commands",
-	Short: "print out commands",
-	Long:  `print out all of the availible commands with or without details`,
+	Short: "Print out available commands",
 	Run: func(cmd *cobra.Command, args []string) {
 		dir, err := os.Getwd()
 		if err != nil {

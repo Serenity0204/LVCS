@@ -1,4 +1,4 @@
-.PHONY: build test init add design.txt command.txt clean
+.PHONY: build test clean
 
 build:
 	go build

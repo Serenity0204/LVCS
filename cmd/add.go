@@ -11,8 +11,7 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "staging the files",
-	Long:  `add command will accept unlimited amount of files as the subcommand and will track them into staging.txt`,
+	Short: "Staging the files",
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		dir, err := os.Getwd()

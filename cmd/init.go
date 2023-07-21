@@ -11,8 +11,7 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "init lvcs directory",
-	Long:  `init lvcs directory to do other operations`,
+	Short: "Init lvcs directory",
 	Run: func(cmd *cobra.Command, args []string) {
 		dir, err := os.Getwd()
 		dir += "\\.lvcs"

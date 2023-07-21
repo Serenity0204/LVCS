@@ -11,8 +11,7 @@ import (
 // branchCmd represents the branch command
 var branchCmd = &cobra.Command{
 	Use:   "branch",
-	Short: "lvcs branching",
-	Long:  `lvcs branching that supports create, delete, checkout, check if exists, get current branch, get all exising branches functions`,
+	Short: "Branching",
 	Run: func(cmd *cobra.Command, args []string) {
 		dir, err := os.Getwd()
 		dir += "\\.lvcs"
