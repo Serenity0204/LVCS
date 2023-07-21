@@ -1,2 +1,0 @@
-once complete DirectoryTree, we can create a file for serialize/deserialize data into file and read it back as a tree
-then make it the DirectoryTree so user can commit based on current pos.(HARD)

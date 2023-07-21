@@ -7,7 +7,7 @@ go mod tidy
 
 // makefile
     make build
-    make run
+    make test
     make test
 
 // install

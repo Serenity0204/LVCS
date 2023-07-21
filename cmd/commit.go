@@ -11,8 +11,8 @@ import (
 // commitCmd represents the commit command
 var commitCmd = &cobra.Command{
 	Use:   "commit",
-	Short: "",
-	Long:  ``,
+	Short: "commit a version",
+	Long:  `commit a new version under current version tree node`,
 	Run: func(cmd *cobra.Command, args []string) {
 		dir, err := os.Getwd()
 		dir += "\\.lvcs"
