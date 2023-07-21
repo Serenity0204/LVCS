@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Serenity0204/LVCS/resources"
 	"github.com/spf13/cobra"
 )
 
-// helpCmd represents the help command
-var helpCmd = &cobra.Command{
-	Use:   "help",
+// commandsCmd represents the help command
+var commandsCmd = &cobra.Command{
+	Use:   "commands",
 	Short: "print out commands",
 	Long:  `print out all of the availible commands with or without details`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -25,21 +26,11 @@ var helpCmd = &cobra.Command{
 		}
 
 		if len(args) == 0 {
-			content, err := os.ReadFile(dir + "/docs/list.txt")
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			fmt.Println(string(content))
+			fmt.Println(resources.LIST)
 			return
 		}
 		if len(args) == 1 && args[0] == "detail" {
-			content, err := os.ReadFile(dir + "/docs/detail.txt")
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			fmt.Println(string(content))
+			fmt.Println(resources.DETAIL)
 			return
 		}
 		fmt.Println("unknown command")
@@ -47,5 +38,5 @@ var helpCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(helpCmd)
+	rootCmd.AddCommand(commandsCmd)
 }
