@@ -5,7 +5,7 @@
             ║╚═╝║ ╚╗╔╝ ║╚═╝║║╚═╝║
             ╚═══╝  ╚╝  ╚═══╝╚═══╝
                      
-                     
+
 -Init:
     LVCS init
 -Stage:
@@ -29,3 +29,6 @@
     LVCS commit current
     LVCS commit tree
     LVCS commit switch <commit version>
+-Log:
+    LVCS log
+    LVCS log <commit version>

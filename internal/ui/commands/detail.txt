@@ -4,8 +4,8 @@
             ║║ ╔╗ ║╚╝║ ║║ ╔╗╚══╗║     ║║║║║╔══╝  ║║  ║╚═╝║ ║║ ║║ ╔╗
             ║╚═╝║ ╚╗╔╝ ║╚═╝║║╚═╝║    ╔╝╚╝║║╚══╗ ╔╝╚╗ ║╔═╗║╔╣╠╗║╚═╝║
             ╚═══╝  ╚╝  ╚═══╝╚═══╝    ╚═══╝╚═══╝ ╚══╝ ╚╝ ╚╝╚══╝╚═══╝
-                                                                                                                    
-                                                                                                                    
+                                                                                                 
+                                                                                                      
 -Init:
     LVCS init : will init the LVCS directory
 -Stage:
@@ -29,3 +29,6 @@
     LVCS commit current : will show the current working version
     LVCS commit tree : will show the commit versions as a tree
     LVCS commit switch <commit version> : will switch to the input version
+-Log:
+    LVCS log : will log out all of the commit history for all of the versions under current branch
+    LVCS log <commit version> : will log out the commit content of the input version under current branch

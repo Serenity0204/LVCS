@@ -21,11 +21,14 @@ func NewLVCSManager(lvcsPath string) *LVCSManager {
 	fileHashIOMan := utils.NewLVCSFileHashIOManager(lvcsPath)
 	initMan := utils.NewLVCSInitManager(lvcsPath)
 	stageMan := utils.NewLVCSStageManager(lvcsPath)
+	logMan := utils.NewLVCSLogManager(lvcsPath)
+
 	manager["branch"] = branchMan
 	manager["commit"] = commitMan
 	manager["fileHashIO"] = fileHashIOMan
 	manager["init"] = initMan
 	manager["stage"] = stageMan
+	manager["log"] = logMan
 	return &LVCSManager{
 		lvcsPath: lvcsPath,
 		lvcsMan:  manager,
@@ -289,6 +292,27 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 				return trackedFiles, nil
 			}
 			return "", errors.New("unknown subcommands:" + subcommands[0])
+		}
+		return "", errors.New("invalid:number of arguments")
+	case "log":
+		// 0 or 1 args
+		logMan, ok := lvcsManager.lvcsMan["log"].(*utils.LVCSLogManager)
+		if !ok {
+			return "", errors.New("failed to execute log")
+		}
+		if len(subcommands) == 0 {
+			logHistory, err := logMan.Log()
+			if err != nil {
+				return "", err
+			}
+			return logHistory, nil
+		}
+		if len(subcommands) == 1 {
+			logContent, err := logMan.LogByVersion(subcommands[0])
+			if err != nil {
+				return "", err
+			}
+			return logContent, nil
 		}
 		return "", errors.New("invalid:number of arguments")
 	default:
