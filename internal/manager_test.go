@@ -40,8 +40,12 @@ func TestLVCSManager(t *testing.T) {
 		t.Errorf("cat-file failed: %s", err.Error()) // Convert error to string
 	}
 
-	_, err = lvcsMan.Execute("add", []string{"../test_data/a.txt", "../test_data/b.txt", "../test_data/ok/abc.txt"})
+	_, err = lvcsMan.Execute("stage", []string{"add", "../test_data/a.txt", "../test_data/b.txt", "../test_data/ok/abc.txt"})
 	if err != nil {
 		t.Errorf("add failed: %s", err.Error()) // Convert error to string
+	}
+	_, err = lvcsMan.Execute("commit", []string{})
+	if err != nil {
+		t.Errorf(err.Error())
 	}
 }

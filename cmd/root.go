@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Serenity0204/LVCS/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -29,4 +30,36 @@ func Execute() {
 func init() {
 	rootCmd.Flags().BoolP("list", "l", false, "list all of the avaible commands")
 	rootCmd.Flags().BoolP("detail", "d", false, "list the detail of every command")
+}
+
+// Helper
+func executeLVCSCommandHelper(command string, args []string) {
+	dir, err := os.Getwd()
+	dir += "\\.lvcs"
+	if err != nil {
+		fmt.Println("Error retrieving .lvcs directory at:", dir)
+		return
+	}
+	lvcsMan := internal.NewLVCSManager(dir)
+	exists, err := lvcsMan.LVCSExists()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	if !exists && command != "init" {
+		fmt.Println(".lvcs directory does not exist, " + command + " failed")
+		return
+	}
+	msg, err := lvcsMan.Execute(command, args)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	art, err := lvcsMan.GetRandomASCIIArt()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(art + "\n\n")
+	fmt.Println(msg)
 }

@@ -8,8 +8,11 @@
                      
 -Init:
     LVCS init
--Add:
-    LVCS add <path to file 1>, <path to file 2>, <path to file 3>, ....
+-Stage:
+    LVCS stage
+    LVCS stage add <path to file 1>, <path to file 2>, <path to file 3>, ....
+    LVCS stage untrack
+    LVCS stage untrack <path to file>
 -FileIO:
     LVCS hashObject <path to file>
     LVCS catFile <path to file>

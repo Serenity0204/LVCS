@@ -320,13 +320,3 @@ func (lvcsCommit *LVCSCommitManager) CommitTree() (string, error) {
 	return tree.NaryTreeString(), nil
 }
 
-// need to move this later too
-func RemoveStageContent(lvcsPath string) error {
-	stagePath := lvcsPath + "/stage.txt"
-	stageFile, err := os.OpenFile(stagePath, os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-	defer stageFile.Close()
-	return nil
-}

@@ -16,16 +16,16 @@ type LVCSManager struct {
 // NewLVCSManager creates a new LVCSAdd instance
 func NewLVCSManager(lvcsPath string) *LVCSManager {
 	manager := make(map[string]interface{})
-	addMan := utils.NewLVCSAddManager(lvcsPath)
 	branchMan := utils.NewLVCSBranchManager(lvcsPath)
 	commitMan := utils.NewLVCSCommitManager(lvcsPath)
 	fileHashIOMan := utils.NewLVCSFileHashIOManager(lvcsPath)
 	initMan := utils.NewLVCSInitManager(lvcsPath)
-	manager["add"] = addMan
+	stageMan := utils.NewLVCSStageManager(lvcsPath)
 	manager["branch"] = branchMan
 	manager["commit"] = commitMan
 	manager["fileHashIO"] = fileHashIOMan
 	manager["init"] = initMan
+	manager["stage"] = stageMan
 	return &LVCSManager{
 		lvcsPath: lvcsPath,
 		lvcsMan:  manager,
@@ -83,27 +83,6 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 			return "", err
 		}
 		return content, nil
-	case "add":
-		// at least 1 subcommand
-		// return success messaage if no error
-		addMan, ok := lvcsManager.lvcsMan["add"].(*utils.LVCSAddManager) // change the receiver later
-		if !ok {
-			return "", errors.New("failed to execute add")
-		}
-		if len(subcommands) < 1 {
-			return "", errors.New("number of argumment not correct, expected at least one path input but not found")
-		}
-		for _, file := range subcommands {
-			err := addMan.Add(file)
-			if err != nil {
-				return "", errors.New("failed to add:" + file)
-			}
-		}
-		trackedFiles := "Added files:\n"
-		for i, fileName := range subcommands {
-			trackedFiles += strconv.Itoa(i+1) + ":" + fileName + "\n"
-		}
-		return trackedFiles, nil
 	case "init":
 		// 0 subcommand
 		if len(subcommands) != 0 {
@@ -254,6 +233,61 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 				return string("Delete branch:" + branchName + " success"), nil
 			}
 			// if 2 args and it's not one of the above then it's an error
+			return "", errors.New("unknown subcommands:" + subcommands[0])
+		}
+		return "", errors.New("invalid:number of arguments")
+	case "stage":
+		// 0, 1, or 2 arguments
+		stageMan, ok := lvcsManager.lvcsMan["stage"].(*utils.LVCSStageManager)
+		if !ok {
+			return "", errors.New("failed to execute stage")
+		}
+		// Show staging content
+		if len(subcommands) == 0 {
+			content, err := stageMan.GetStageContent()
+			if err != nil {
+				return "", err
+			}
+			return content, nil
+		}
+		// Untrack All
+		if len(subcommands) == 1 && subcommands[0] == "untrack" {
+			err := stageMan.RemoveAllStageContent()
+			if err != nil {
+				return "", err
+			}
+			return string("Untracked all staged files success"), nil
+		}
+
+		// stage add, need to have add as subcommand, and at least another arg
+		if len(subcommands) >= 2 {
+			// Untrack file
+			if len(subcommands) == 2 && subcommands[0] == "untrack" {
+				err := stageMan.RemoveStageContent(subcommands[1])
+				if err != nil {
+					return "", err
+				}
+				return string("Untracked " + subcommands[1] + " success"), nil
+			}
+			if subcommands[0] == "add" {
+				for i, file := range subcommands {
+					if i == 0 {
+						continue
+					}
+					err := stageMan.Add(file)
+					if err != nil {
+						return "", errors.New("failed to add:" + file)
+					}
+				}
+				trackedFiles := "Added files:\n"
+				for i, fileName := range subcommands {
+					if i == 0 {
+						continue
+					}
+					trackedFiles += strconv.Itoa(i) + ":" + fileName + "\n"
+				}
+				return trackedFiles, nil
+			}
 			return "", errors.New("unknown subcommands:" + subcommands[0])
 		}
 		return "", errors.New("invalid:number of arguments")
