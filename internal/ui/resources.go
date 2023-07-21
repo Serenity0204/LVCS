@@ -1,4 +1,4 @@
-package resources
+package ui
 
 import (
 	_ "embed"
@@ -19,8 +19,8 @@ var ASCII4 string
 //go:embed ASCIIArts/ascii5.txt
 var ASCII5 string
 
-//go:embed docs/list.txt
+//go:embed commands/list.txt
 var LIST string
 
-//go:embed docs/detail.txt
+//go:embed commands/detail.txt
 var DETAIL string

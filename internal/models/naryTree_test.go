@@ -1,15 +1,17 @@
-package models
+package models_test
 
 import (
 	"fmt"
 	"testing"
+
+	"github.com/Serenity0204/LVCS/internal/models"
 )
 
 const debug bool = false
 
 func TestNaryTree(t *testing.T) {
-	tree := NewNaryTree()
-	if tree.root != nil {
+	tree := models.NewNaryTree()
+	if tree.GetNaryTreeRoot() != nil {
 		t.Errorf("expected root to be nil but it's not nil")
 	}
 

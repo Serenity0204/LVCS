@@ -4,8 +4,6 @@ import (
 	"errors"
 	"math/rand"
 	"time"
-
-	"github.com/Serenity0204/LVCS/resources"
 )
 
 type ASCIIArtGenerator struct {
@@ -15,11 +13,11 @@ type ASCIIArtGenerator struct {
 func NewASCIIArtGenerator() *ASCIIArtGenerator {
 	asciiMap := make(map[int]string)
 
-	asciiMap[1] = resources.ASCII1
-	asciiMap[2] = resources.ASCII2
-	asciiMap[3] = resources.ASCII3
-	asciiMap[4] = resources.ASCII4
-	asciiMap[5] = resources.ASCII5
+	asciiMap[1] = ASCII1
+	asciiMap[2] = ASCII2
+	asciiMap[3] = ASCII3
+	asciiMap[4] = ASCII4
+	asciiMap[5] = ASCII5
 	return &ASCIIArtGenerator{
 		ASCIIArtMap: asciiMap,
 	}

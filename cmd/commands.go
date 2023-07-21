@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Serenity0204/LVCS/resources"
+	"github.com/Serenity0204/LVCS/internal/ui"
 	"github.com/spf13/cobra"
 )
 
@@ -25,11 +25,11 @@ var commandsCmd = &cobra.Command{
 		}
 
 		if len(args) == 0 {
-			fmt.Println(resources.LIST)
+			fmt.Println(ui.LIST)
 			return
 		}
 		if len(args) == 1 && args[0] == "detail" {
-			fmt.Println(resources.DETAIL)
+			fmt.Println(ui.DETAIL)
 			return
 		}
 		fmt.Println("unknown command")
