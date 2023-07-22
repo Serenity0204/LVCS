@@ -125,3 +125,53 @@ func (tree *NaryTree) copyNaryTree(node *treeNode) *treeNode {
 	}
 	return copyNode
 }
+
+func (tree *NaryTree) LCA(version1 string, version2 string) (string, error) {
+	// Find the nodes corresponding to the given values
+	node1, err := tree.GetNode(version1)
+	if err != nil {
+		return "", err
+	}
+
+	node2, err := tree.GetNode(version2)
+	if err != nil {
+		return "", err
+	}
+
+	// Find the LCA of the two nodes
+	lcaValue := tree.findLCA(tree.root, node1, node2)
+
+	if lcaValue == "" {
+		return "", errors.New("LCA not found")
+	}
+
+	return lcaValue, nil
+}
+
+func (tree *NaryTree) findLCA(currentNode *treeNode, node1 *treeNode, node2 *treeNode) string {
+	if currentNode == nil {
+		return ""
+	}
+
+	// If the current node is either of the two nodes, it is the LCA
+	if currentNode == node1 || currentNode == node2 {
+		return currentNode.Value
+	}
+
+	// Recursively search for the LCA in each child
+	lcaFound := false
+	var lcaValue string
+	for _, child := range currentNode.Children {
+		found := tree.findLCA(child, node1, node2)
+		if found != "" {
+			if lcaFound {
+				// If the LCA has already been found on a previous child, it means
+				// the current node is the LCA of the two nodes.
+				return currentNode.Value
+			}
+			lcaFound = true
+			lcaValue = found
+		}
+	}
+	return lcaValue
+}

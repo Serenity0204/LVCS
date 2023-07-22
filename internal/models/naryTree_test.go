@@ -2,6 +2,7 @@ package models_test
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/Serenity0204/LVCS/internal/models"
@@ -72,5 +73,118 @@ func TestNaryTree(t *testing.T) {
 	if debug {
 		treeString := tree.NaryTreeString()
 		fmt.Println(treeString)
+	}
+}
+
+func buildTestTree() (*models.NaryTree, error) {
+	tree := models.NewNaryTree()
+	err := tree.Insert(nil, "v0")
+	if err != nil {
+		return nil, err
+	}
+	parent, err := tree.GetNode("v0")
+	if err != nil {
+		return nil, err
+	}
+	for i := 1; i <= 4; i++ {
+		err = tree.Insert(parent, "v"+strconv.Itoa(i))
+		if err != nil {
+			return nil, err
+		}
+	}
+	child := 5
+	for i := 1; i <= 4; i++ {
+		parent, err = tree.GetNode("v" + strconv.Itoa(i))
+		if err != nil {
+			return nil, err
+		}
+		for j := 0; j < 2; j++ {
+			err = tree.Insert(parent, "v"+strconv.Itoa(child))
+			if err != nil {
+				return nil, err
+			}
+			child++
+		}
+	}
+	parent, err = tree.GetNode("v11")
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < 3; i++ {
+		err = tree.Insert(parent, "v"+strconv.Itoa(child))
+		if err != nil {
+			return nil, err
+		}
+		child++
+	}
+	if debug {
+		fmt.Println(tree.NaryTreeString())
+	}
+	return tree, nil
+}
+
+func TestNaryTreeLCA(t *testing.T) {
+	tree, err := buildTestTree()
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	// Equal Node
+	version, err := tree.LCA("v4", "v4")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if version != "v4" {
+		t.Errorf("version not equal to v4")
+	}
+
+	// General Cases
+	version, err = tree.LCA("v5", "v6")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if version != "v1" {
+		t.Errorf("version not equal to v1")
+	}
+	version, err = tree.LCA("v2", "v8")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if version != "v2" {
+		t.Errorf("version not equal to v2")
+	}
+
+	version, err = tree.LCA("v12", "v10")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if version != "v0" {
+		t.Errorf("version not equal to v0")
+	}
+
+	version, err = tree.LCA("v15", "v12")
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+	if version != "v4" {
+		t.Errorf("version not equal to v4")
+	}
+
+	// Non existing Nodes
+	version, err = tree.LCA("v666", "v1")
+	if err == nil {
+		t.Errorf("expected error to be nil but not none nil")
+	}
+	version, err = tree.LCA("v6", "v111")
+	if err == nil {
+		t.Errorf("expected error to be nil but not none nil")
+	}
+
+	// Empty tree
+	tree = models.NewNaryTree()
+	version, err = tree.LCA("v0", "v0")
+	if err == nil {
+		t.Errorf("expected error to be nil but not none nil")
 	}
 }
