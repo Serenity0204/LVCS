@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -135,13 +136,81 @@ func (lvcsCommit *LVCSCommitManager) getLatestVersion(branchName string) (int, e
 	return latestVersion, nil
 }
 
-func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, version int) error {
+func (lvcsCommit *LVCSCommitManager) removeDuplicateParentContent(branchName string, version string) error {
+	versionPath := lvcsCommit.lvcsCommitPath + "/" + branchName + "/" + version + ".txt"
+	file, err := os.Open(versionPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	// Create a map to store the latest key-value pairs
+	latestKeys := make(map[string]string)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		parts := strings.SplitN(line, " ", 2)
+		if len(parts) != 2 {
+			// Skip lines that are not in the expected format (path OID)
+			continue
+		}
+		filePath := parts[0]
+		oid := parts[1]
+		// Update the latest value for the key
+		latestKeys[filePath] = oid
+	}
+	err = scanner.Err()
+	if err != nil {
+		return err
+	}
+	file.Close()
 
+	// Reopen the file in write mode to overwrite its content
+	file, err = os.Create(versionPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Write the latest key-value pairs to the file
+	for filePath, oid := range latestKeys {
+		_, err := fmt.Fprintf(file, "%s %s\n", filePath, oid)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, version int, inherit bool) error {
 	// get the stage content
 	content, err := os.ReadFile(lvcsCommit.lvcsStagePath)
 	if err != nil {
 		return err
 	}
+	// get the parent's node's content
+	tree, err := lvcsCommit.getCommitTree()
+	if err != nil {
+		return err
+	}
+
+	parentInfo := ""
+	if inherit && version != 0 {
+		parent, err := tree.GetParentNode(string("v" + strconv.Itoa(version)))
+		if err != nil {
+			return err
+		}
+		// read parent's commit
+		logMan := NewLVCSLogManager(lvcsCommit.lvcsPath)
+		parentInfo, err = logMan.LogByVersion(parent.Value)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Combine parentInfo and content into a single byte slice
+	var combinedContent bytes.Buffer
+	combinedContent.WriteString(parentInfo)
+	combinedContent.Write(content)
 
 	branchPath := lvcsCommit.lvcsCommitPath + "/" + branchName + "/v" + strconv.Itoa(version) + ".txt"
 
@@ -153,39 +222,59 @@ func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, ve
 	defer versionFile.Close()
 
 	// Write the content into the file
-	_, err = io.Copy(versionFile, bytes.NewReader(content))
+	_, err = io.Copy(versionFile, &combinedContent)
 	if err != nil {
 		// Clean up the file if writing fails
 		os.Remove(branchPath)
 		return err
 	}
+	// remove stage content
+	stageMan := NewLVCSStageManager(lvcsCommit.lvcsPath)
+	err = stageMan.RemoveAllStageContent()
+	if err != nil {
+		return err
+	}
+	// remove duplicate
+	err = lvcsCommit.removeDuplicateParentContent(branchName, string("v"+strconv.Itoa(version)))
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-// commit will commit a new version under current version
-func (lvcsCommit *LVCSCommitManager) Commit() error {
-	// default is master for branchName
+func (lvcsCommit *LVCSCommitManager) getCommitTree() (*models.NaryTree, error) {
 	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
 	curBranchName, err := lvcsBranch.GetCurrentBranch()
 	if err != nil {
-
-		return err
+		return nil, err
 	}
-
 	// get previous tree
 	tree := models.NewNaryTree()
 	// read tree content
 	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
 	content, err := os.ReadFile(treePath)
 	if err != nil {
-
-		return err
+		return nil, err
 	}
 	treeData := string(content)
 
 	err = tree.Deserialize(treeData)
 	if err != nil {
+		return nil, err
+	}
+	return tree, nil
+}
 
+// commit will commit a new version under current version
+func (lvcsCommit *LVCSCommitManager) Commit(inherit bool) error {
+	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
+	curBranchName, err := lvcsBranch.GetCurrentBranch()
+	if err != nil {
+		return err
+	}
+
+	tree, err := lvcsCommit.getCommitTree()
+	if err != nil {
 		return err
 	}
 
@@ -201,15 +290,8 @@ func (lvcsCommit *LVCSCommitManager) Commit() error {
 	}
 	newVersion := latestVersion + 1
 
-	// create the commit record
-	err = lvcsCommit.createNewCommitRecord(curBranchName, newVersion)
-	if err != nil {
-		return err
-	}
-
 	// insert
 	// get parent and cur version string
-
 	curVersionStr := "v" + strconv.Itoa(newVersion)
 
 	if curVersion != -1 {
@@ -238,6 +320,7 @@ func (lvcsCommit *LVCSCommitManager) Commit() error {
 	}
 
 	// write it back to file
+	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
 	treeFile, err := os.OpenFile(treePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
 		return err
@@ -249,9 +332,13 @@ func (lvcsCommit *LVCSCommitManager) Commit() error {
 		return err
 	}
 
+	// create the commit record
+	err = lvcsCommit.createNewCommitRecord(curBranchName, newVersion, inherit)
+	if err != nil {
+		return err
+	}
 	// update current ref
 	// default is master for branchName
-
 	file, err := os.OpenFile(lvcsCommit.lvcsCurrentRefPath, os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
@@ -262,6 +349,7 @@ func (lvcsCommit *LVCSCommitManager) Commit() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -295,23 +383,7 @@ func (lvcsCommit *LVCSCommitManager) SwitchCommitVersion(version string) error {
 }
 
 func (lvcsCommit *LVCSCommitManager) CommitTree() (string, error) {
-	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
-	curBranchName, err := lvcsBranch.GetCurrentBranch()
-	if err != nil {
-		return "", err
-	}
-
-	// get tree
-	tree := models.NewNaryTree()
-	// read tree content
-	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
-	content, err := os.ReadFile(treePath)
-	if err != nil {
-		return "", err
-	}
-	treeData := string(content)
-
-	err = tree.Deserialize(treeData)
+	tree, err := lvcsCommit.getCommitTree()
 	if err != nil {
 		return "", err
 	}
@@ -322,23 +394,7 @@ func (lvcsCommit *LVCSCommitManager) CommitTree() (string, error) {
 }
 
 func (lvcsCommit *LVCSCommitManager) LCA(version1 string, version2 string) (string, error) {
-	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
-	curBranchName, err := lvcsBranch.GetCurrentBranch()
-	if err != nil {
-		return "", err
-	}
-
-	// get tree
-	tree := models.NewNaryTree()
-	// read tree content
-	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
-	content, err := os.ReadFile(treePath)
-	if err != nil {
-		return "", err
-	}
-	treeData := string(content)
-
-	err = tree.Deserialize(treeData)
+	tree, err := lvcsCommit.getCommitTree()
 	if err != nil {
 		return "", err
 	}
@@ -352,3 +408,13 @@ func (lvcsCommit *LVCSCommitManager) LCA(version1 string, version2 string) (stri
 	lcaOutput := tree.NaryTreeString() + "\n" + "LCA:" + lca + "\n"
 	return lcaOutput, nil
 }
+
+// // Will remove the commit including it's children
+// func (lvcsCommit *LVCSCommitManager) RemoveCommit(version string) error {
+// 	tree, err := lvcsCommit.getCommitTree()
+// 	if err != nil {
+// 		return err
+// 	}
+// 	tree.Remove(version)
+// 	return nil
+// }

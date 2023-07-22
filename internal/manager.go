@@ -109,7 +109,7 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 			return "", errors.New("failed to execute commit")
 		}
 		if len(subcommands) == 0 {
-			err := commitMan.Commit()
+			err := commitMan.Commit(false)
 			if err != nil {
 				return "", err
 			}
@@ -117,6 +117,14 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 		}
 
 		if len(subcommands) == 1 {
+			// inherit commit
+			if subcommands[0] == "inherit" {
+				err := commitMan.Commit(true)
+				if err != nil {
+					return "", err
+				}
+				return string("commit success"), nil
+			}
 			// commit latest
 			if subcommands[0] == "latest" {
 				latest, err := commitMan.GetLatestVersion()
@@ -313,10 +321,17 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 			return logHistory, nil
 		}
 		if len(subcommands) == 1 {
-			logContent, err := logMan.LogByVersion(subcommands[0])
+			version := subcommands[0]
+			content, err := logMan.LogByVersion(version)
 			if err != nil {
 				return "", err
 			}
+			// if empty log empty
+			if len(content) == 0 {
+				logContent := "version:" + version + "\nEmpty\n\n"
+				return logContent, nil
+			}
+			logContent := "version:" + version + "\n" + string(content) + "\n\n"
 			return logContent, nil
 		}
 		return "", errors.New("invalid:number of arguments")

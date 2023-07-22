@@ -1,6 +1,6 @@
 
 # LVCS
-Project Description goes here
+A little version control system 1 
 
 * operation 1
 * operation 2
@@ -8,7 +8,7 @@ Project Description goes here
 
 ## Design
 change the repo name:
-Can be found in https://github.com/Serenity0204/go-cli-tempalte/blob/master/design.txt
+Can be found in https://github.com/Serenity0204/LVCS/blob/master/design.txt
 
 
 ## Features

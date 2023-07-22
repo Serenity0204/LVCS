@@ -25,10 +25,12 @@
     LVCS branch delete <branch name>
 -Commit:
     LVCS commit
+    LVCS commit inherit
     LVCS commit latest
     LVCS commit current
     LVCS commit tree
     LVCS commit switch <commit version>
+    LVCS commit lca <commit version 1> <commit version 2>
 -Log:
     LVCS log
     LVCS log <commit version>

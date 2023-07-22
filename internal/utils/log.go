@@ -76,11 +76,5 @@ func (lvcsLogger *LVCSLogManager) LogByVersion(version string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// if empty log empty
-	if len(content) == 0 {
-		logContent := "version:" + version + "\nEmpty\n\n"
-		return logContent, nil
-	}
-	logContent := "version:" + version + "\n" + string(content) + "\n\n"
-	return logContent, nil
+	return string(content), nil
 }

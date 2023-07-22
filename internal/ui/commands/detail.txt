@@ -25,10 +25,12 @@
     LVCS branch delete <branch name> : will delete the branch
 -Commit:
     LVCS commit : will create a new version under the current version node 
+    LVCS commit inherit : will inherit the parent node's data, if staged files are duplicated with the parent, then will take the staged files
     LVCS commit latest : will show the latest version
     LVCS commit current : will show the current working version
     LVCS commit tree : will show the commit versions as a tree
     LVCS commit switch <commit version> : will switch to the input version
+    LVCS commit lca <commit version 1> <commit version 2> : will find the lowest common ancestor of those two input versions
 -Log:
     LVCS log : will log out all of the commit history for all of the versions under current branch
     LVCS log <commit version> : will log out the commit content of the input version under current branch
