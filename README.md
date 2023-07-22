@@ -12,6 +12,27 @@ make sure to have go install on your machine
 * go install github.com/Serenity0204/LVCS@v1.0.0
 
 
+## Example Usage
+Go to the directory you want to use LVCS
+* LVCS init
+* LVCS stage add "file 0"
+* LVCS commit inherit
+* LVCS commit tree
+* LVCS stage add "file 1" "file 2"
+* LVCS commit
+* LVCS stage
+* LVCS stage add "file 1" "file 2"
+* LVCS stage untrack "file 2"
+* LVCS commit current
+* LVCS commit switch v0
+* LVCS stage
+* LVCS stage commit inherit
+* LVCS commit tree
+* LVCS branch
+* LVCS log
+* LVCS dump
+
+
 ## Uninstall
 * windows: del %GOPATH%\bin\LVCS.exe
 * macOS/Linux: rm $GOPATH/bin/LVCS
