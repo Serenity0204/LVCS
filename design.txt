@@ -1,0 +1,7 @@
+- cmd // a folder for executing cobra commands
+- internal // internal logic
+  -utils // utility functions/classes for version control
+  -models // core of the commit, the nary tree
+  -ui // for ascii art
+  manager.go // the entry point of executing all the version control functionalities
+main.go // main entry of the program

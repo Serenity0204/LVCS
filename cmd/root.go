@@ -12,7 +12,6 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "LVCS",
 	Short: "Little Version Control System",
-	Long:  `A Little Version Control System built in Golang Cobra with supporting init, add, commit, branch, hashObject, and catFile operations`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("type 'LVCS commands' to view all of the available commands or 'LVCS commands detail' to view the detail")
 	},
@@ -46,6 +45,21 @@ func executeLVCSCommandHelper(command string, args []string) {
 		fmt.Println("Error:", err)
 		return
 	}
+	art, err := lvcsMan.GetRandomASCIIArt()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if command == "dump" && len(args) == 0 {
+		err = lvcsMan.Dump()
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		fmt.Println(art + "\n\n")
+		fmt.Println("Dump .lvcs directory success")
+		return
+	}
 	if !exists && command != "init" {
 		fmt.Println(".lvcs directory does not exist, " + command + " failed")
 		return
@@ -55,11 +69,7 @@ func executeLVCSCommandHelper(command string, args []string) {
 		fmt.Println("Error:", err)
 		return
 	}
-	art, err := lvcsMan.GetRandomASCIIArt()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+
 	fmt.Println(art + "\n\n")
 	fmt.Println(msg)
 }

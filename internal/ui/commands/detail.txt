@@ -8,6 +8,8 @@
                                                                                                       
 -Init:
     LVCS init : will init the LVCS directory
+-Dump:
+    LVCS dump : will dump the entire LVCS directory
 -Stage:
     LVCS stage : will show all of the staged content
     LVCS add <path to file 1> <path to file 2> <path to file 3> .... : will track and add the files to the stage

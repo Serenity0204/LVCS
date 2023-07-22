@@ -2,6 +2,7 @@ package internal
 
 import (
 	"errors"
+	"os"
 	"strconv"
 
 	"github.com/Serenity0204/LVCS/internal/ui"
@@ -51,6 +52,20 @@ func (lvcsManager *LVCSManager) GetRandomASCIIArt() (string, error) {
 		return "", err
 	}
 	return art, nil
+}
+func (lvcsManager *LVCSManager) Dump() error {
+	exist, err := lvcsManager.LVCSExists()
+	if err != nil {
+		return err
+	}
+	if !exist {
+		return errors.New(".lvcs directory does not exist")
+	}
+	err = os.RemoveAll(lvcsManager.lvcsPath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (string, error) {
