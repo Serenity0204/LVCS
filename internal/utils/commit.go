@@ -46,6 +46,7 @@ func (lvcsCommit *LVCSCommitManager) versionExists(branchName string, version st
 	}
 	return false, nil
 }
+
 func (lvcsCommit *LVCSCommitManager) GetLatestVersion() (string, error) {
 	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
 	curBranchName, err := lvcsBranch.GetCurrentBranch()
@@ -315,8 +316,39 @@ func (lvcsCommit *LVCSCommitManager) CommitTree() (string, error) {
 		return "", err
 	}
 	if tree.GetNaryTreeRoot() == nil {
-		return "Empty", nil
+		return string("Empty Tree"), nil
 	}
 	return tree.NaryTreeString(), nil
 }
 
+func (lvcsCommit *LVCSCommitManager) LCA(version1 string, version2 string) (string, error) {
+	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
+	curBranchName, err := lvcsBranch.GetCurrentBranch()
+	if err != nil {
+		return "", err
+	}
+
+	// get tree
+	tree := models.NewNaryTree()
+	// read tree content
+	treePath := lvcsCommit.lvcsTreePath + "/" + curBranchName + "_tree.txt"
+	content, err := os.ReadFile(treePath)
+	if err != nil {
+		return "", err
+	}
+	treeData := string(content)
+
+	err = tree.Deserialize(treeData)
+	if err != nil {
+		return "", err
+	}
+	if tree.GetNaryTreeRoot() == nil {
+		return string("Empty Tree"), nil
+	}
+	lca, err := tree.LCA(version1, version2)
+	if err != nil {
+		return "", err
+	}
+	lcaOutput := tree.NaryTreeString() + "\n" + "LCA:" + lca + "\n"
+	return lcaOutput, nil
+}

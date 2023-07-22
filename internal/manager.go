@@ -102,7 +102,7 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 		}
 		return string("Init .lvcs directory at:" + lvcsManager.lvcsPath + " success"), nil
 	case "commit":
-		// 0, 1, or 2 subcommands
+		// 0, 1, 2, or 3 subcommands
 		// commit
 		commitMan, ok := lvcsManager.lvcsMan["commit"].(*utils.LVCSCommitManager)
 		if !ok {
@@ -144,17 +144,22 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 			return "", errors.New("unknown subcommands:" + subcommands[0])
 		}
 		// commit switch <version number>
-		if len(subcommands) == 2 {
-			if subcommands[0] != "switch" {
-				return "", errors.New("unknown subcommands:" + subcommands[0])
-			}
+		if len(subcommands) == 2 && subcommands[0] == "switch" {
 			err := commitMan.SwitchCommitVersion(subcommands[1])
 			if err != nil {
 				return "", err
 			}
 			return string("Switch to " + subcommands[1] + " success"), nil
 		}
-
+		if len(subcommands) == 3 && subcommands[0] == "lca" {
+			version1 := subcommands[1]
+			version2 := subcommands[2]
+			lca, err := commitMan.LCA(version1, version2)
+			if err != nil {
+				return "", err
+			}
+			return lca, nil
+		}
 		return "", errors.New("invalid:number of arguments")
 	case "branch":
 		// 0, or 2 sub commands

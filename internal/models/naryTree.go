@@ -86,7 +86,7 @@ func (tree *NaryTree) GetNode(val string) (*treeNode, error) {
 
 func (tree *NaryTree) findNode(node *treeNode, val string) (*treeNode, error) {
 	if node == nil {
-		return nil, errors.New("node not found")
+		return nil, errors.New("node not found:" + val)
 	}
 
 	if node.Value == val {
@@ -100,7 +100,7 @@ func (tree *NaryTree) findNode(node *treeNode, val string) (*treeNode, error) {
 		}
 	}
 
-	return nil, errors.New("node not found")
+	return nil, errors.New("node not found:" + val)
 }
 
 // Deserialize deserializes a JSON string to an N-ary tree
