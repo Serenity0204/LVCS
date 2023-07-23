@@ -26,10 +26,12 @@ Go to the directory you want to use LVCS
 * LVCS commit current
 * LVCS commit switch v0
 * LVCS stage
-* LVCS stage commit
+* LVCS commit
 * LVCS commit tree
 * LVCS branch
 * LVCS log
+* LVCS commit lca v1 v2
+* LVCS restore v0
 * LVCS dump
 
 
