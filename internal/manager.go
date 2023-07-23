@@ -22,6 +22,7 @@ func NewLVCSManager(lvcsPath string) *LVCSManager {
 	initMan := utils.NewLVCSInitManager(lvcsPath)
 	stageMan := utils.NewLVCSStageManager(lvcsPath)
 	logMan := utils.NewLVCSLogManager(lvcsPath)
+	restoreMan := utils.NewLVCSRestoreManager(lvcsPath)
 
 	manager["branch"] = branchMan
 	manager["commit"] = commitMan
@@ -29,6 +30,8 @@ func NewLVCSManager(lvcsPath string) *LVCSManager {
 	manager["init"] = initMan
 	manager["stage"] = stageMan
 	manager["log"] = logMan
+	manager["restore"] = restoreMan
+
 	return &LVCSManager{
 		lvcsPath: lvcsPath,
 		lvcsMan:  manager,
@@ -83,6 +86,8 @@ func (lvcsManager *LVCSManager) Execute(command string, subcommands []string) (s
 		return lvcsManager.stageHandler(subcommands)
 	case "log":
 		return lvcsManager.logHandler(subcommands)
+	case "restore":
+		return lvcsManager.restoreHandler(subcommands)
 	default:
 		// unknown command
 		return "", errors.New("unknown command:" + command)

@@ -45,7 +45,7 @@ func TestCommit(t *testing.T) {
 
 	lvcsCommit := utils.NewLVCSCommitManager(lvcsTestDir)
 
-	err = lvcsCommit.Commit(true)
+	err = lvcsCommit.Commit(false)
 	if err != nil {
 		t.Errorf(err.Error())
 	}

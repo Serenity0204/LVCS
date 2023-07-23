@@ -70,7 +70,7 @@ func (lvcsManager *LVCSManager) commitHandler(subcommands []string) (string, err
 		return "", errors.New("failed to execute commit")
 	}
 	if len(subcommands) == 0 {
-		err := commitMan.Commit(true)
+		err := commitMan.Commit(false)
 		if err != nil {
 			return "", err
 		}
@@ -80,7 +80,7 @@ func (lvcsManager *LVCSManager) commitHandler(subcommands []string) (string, err
 	if len(subcommands) == 1 {
 		// inherit commit
 		if subcommands[0] == "fresh" {
-			err := commitMan.Commit(false)
+			err := commitMan.Commit(true)
 			if err != nil {
 				return "", err
 			}
@@ -129,7 +129,7 @@ func (lvcsManager *LVCSManager) commitHandler(subcommands []string) (string, err
 		}
 		return lca, nil
 	}
-	return "", errors.New("invalid:number of arguments")
+	return "", errors.New("invalid number of arguments")
 }
 
 func (lvcsManager *LVCSManager) branchHandler(subcommands []string) (string, error) {
@@ -214,7 +214,7 @@ func (lvcsManager *LVCSManager) branchHandler(subcommands []string) (string, err
 		// if 2 args and it's not one of the above then it's an error
 		return "", errors.New("unknown subcommands:" + subcommands[0])
 	}
-	return "", errors.New("invalid:number of arguments")
+	return "", errors.New("invalid number of arguments")
 }
 
 func (lvcsManager *LVCSManager) stageHandler(subcommands []string) (string, error) {
@@ -281,7 +281,7 @@ func (lvcsManager *LVCSManager) stageHandler(subcommands []string) (string, erro
 		return files, nil
 
 	}
-	return "", errors.New("invalid:number of arguments")
+	return "", errors.New("invalid number of arguments")
 }
 
 func (lvcsManager *LVCSManager) logHandler(subcommands []string) (string, error) {
@@ -320,5 +320,21 @@ func (lvcsManager *LVCSManager) logHandler(subcommands []string) (string, error)
 		}
 		return content, nil
 	}
-	return "", errors.New("invalid:number of arguments")
+	return "", errors.New("invalid number of arguments")
+}
+
+func (lvcsManager *LVCSManager) restoreHandler(subcommands []string) (string, error) {
+	//
+	restoreMan, ok := lvcsManager.lvcsMan["restore"].(*utils.LVCSRestoreManager)
+	if !ok {
+		return "", errors.New("failed to execute restore")
+	}
+	if len(subcommands) != 1 {
+		return "", errors.New("invalid number of arguments")
+	}
+	err := restoreMan.Restore(subcommands[0])
+	if err != nil {
+		return "", err
+	}
+	return string("Restored " + subcommands[0] + " as " + subcommands[0] + " success"), nil
 }

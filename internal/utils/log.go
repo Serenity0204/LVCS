@@ -65,8 +65,8 @@ func (lvcsLogger *LVCSLogManager) LogByVersion(version string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	lvcsCommitMan := NewLVCSCommitManager(lvcsLogger.lvcsPath)
-	exist, err := lvcsCommitMan.versionExists(curBranch, version)
+	lvcsCommit := NewLVCSCommitManager(lvcsLogger.lvcsPath)
+	exist, err := lvcsCommit.versionExists(curBranch, version)
 	if err != nil {
 		return "", err
 	}
@@ -89,7 +89,7 @@ func (lvcsLogger *LVCSLogManager) LogByVersionDetail(version string) (string, er
 		return "", err
 	}
 	scanner := bufio.NewScanner(strings.NewReader(logs))
-	lvcsFileIOMan := NewLVCSFileHashIOManager(lvcsLogger.lvcsPath)
+	lvcsFileIO := NewLVCSFileHashIOManager(lvcsLogger.lvcsPath)
 	logContent := "Commit History With Detailed File View:\n\n"
 	if len(logs) == 0 {
 		logContent += "Empty\n"
@@ -103,7 +103,7 @@ func (lvcsLogger *LVCSLogManager) LogByVersionDetail(version string) (string, er
 		if len(parts) == 3 {
 			filePath := parts[0]
 			oid := parts[1]
-			content, err := lvcsFileIOMan.CatFile(oid)
+			content, err := lvcsFileIO.CatFile(oid)
 			if err != nil {
 				return "", err
 			}

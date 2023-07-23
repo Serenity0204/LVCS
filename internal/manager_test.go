@@ -48,4 +48,8 @@ func TestLVCSManager(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+	err = lvcsMan.Dump()
+	if err != nil {
+		t.Errorf(err.Error())
+	}
 }

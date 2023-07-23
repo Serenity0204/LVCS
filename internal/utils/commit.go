@@ -155,8 +155,9 @@ func (lvcsCommit *LVCSCommitManager) removeDuplicateParentContent(branchName str
 		}
 		filePath := parts[0]
 		oid := parts[1]
+		relative := parts[2]
 		// Update the latest value for the key
-		latestKeys[filePath] = oid
+		latestKeys[filePath] = oid + " " + relative
 	}
 	err = scanner.Err()
 	if err != nil {
@@ -181,7 +182,7 @@ func (lvcsCommit *LVCSCommitManager) removeDuplicateParentContent(branchName str
 	return nil
 }
 
-func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, version int, inherit bool) error {
+func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, version int, fresh bool) error {
 	// get the stage content
 	content, err := os.ReadFile(lvcsCommit.lvcsStagePath)
 	if err != nil {
@@ -194,7 +195,7 @@ func (lvcsCommit *LVCSCommitManager) createNewCommitRecord(branchName string, ve
 	}
 
 	parentInfo := ""
-	if inherit && version != 0 {
+	if !fresh && version != 0 {
 		parent, err := tree.GetParentNode(string("v" + strconv.Itoa(version)))
 		if err != nil {
 			return err
@@ -266,7 +267,7 @@ func (lvcsCommit *LVCSCommitManager) getCommitTree() (*models.NaryTree, error) {
 }
 
 // commit will commit a new version under current version
-func (lvcsCommit *LVCSCommitManager) Commit(inherit bool) error {
+func (lvcsCommit *LVCSCommitManager) Commit(fresh bool) error {
 	lvcsBranch := NewLVCSBranchManager(lvcsCommit.lvcsPath)
 	curBranchName, err := lvcsBranch.GetCurrentBranch()
 	if err != nil {
@@ -333,7 +334,7 @@ func (lvcsCommit *LVCSCommitManager) Commit(inherit bool) error {
 	}
 
 	// create the commit record
-	err = lvcsCommit.createNewCommitRecord(curBranchName, newVersion, inherit)
+	err = lvcsCommit.createNewCommitRecord(curBranchName, newVersion, fresh)
 	if err != nil {
 		return err
 	}

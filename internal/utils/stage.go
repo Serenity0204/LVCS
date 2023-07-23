@@ -186,7 +186,7 @@ func (lvcsStage *LVCSStageManager) RemoveStageContent(file string) error {
 		line := scanner.Text()
 		parts := strings.SplitN(line, " ", 3)
 		if len(parts) != 3 {
-			// Skip lines that are not in the expected format (path OID)
+			// Skip lines that are not in the expected format (path OID relativePath)
 			continue
 		}
 		filePath := parts[0]

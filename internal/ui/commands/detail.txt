@@ -37,3 +37,5 @@
     LVCS log : will log out all of the commit history for all of the versions under current branch
     LVCS log <commit version> : will log out the commit content of the input version under current branch
     LVCS log detail <commit version> : will log out the detailed file content of the input commit version under current branch
+-Restore
+    LVCS restore <commit version> : will restore the commit of the current branch into a <current branch name> + _ + <commit version>.zip
