@@ -148,9 +148,9 @@ func (lvcsCommit *LVCSCommitManager) removeDuplicateParentContent(branchName str
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		parts := strings.SplitN(line, " ", 2)
-		if len(parts) != 2 {
-			// Skip lines that are not in the expected format (path OID)
+		parts := strings.SplitN(line, " ", 3)
+		if len(parts) != 3 {
+			// Skip lines that are not in the expected format (path OID relativePath)
 			continue
 		}
 		filePath := parts[0]

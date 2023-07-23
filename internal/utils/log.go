@@ -100,7 +100,7 @@ func (lvcsLogger *LVCSLogManager) LogByVersionDetail(version string) (string, er
 	for scanner.Scan() {
 		line := scanner.Text()
 		parts := strings.Split(line, " ")
-		if len(parts) == 2 {
+		if len(parts) == 3 {
 			filePath := parts[0]
 			oid := parts[1]
 			content, err := lvcsFileIOMan.CatFile(oid)

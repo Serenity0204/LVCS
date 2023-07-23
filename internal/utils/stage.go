@@ -49,7 +49,7 @@ func (lvcsStage *LVCSStageManager) keyExists(target string) (bool, error) {
 		// Split the line by white space
 		fields := strings.Fields(line)
 		// Invalid line format, skip to the next line
-		if len(fields) != 2 {
+		if len(fields) != 3 {
 			continue
 		}
 
@@ -110,7 +110,7 @@ func (lvcsStage *LVCSStageManager) Add(file string) error {
 	defer stageFile.Close()
 
 	// Append absolute file path, oid, filename into stage.txt
-	content := absPath + " " + string(oid) + "\n"
+	content := absPath + " " + string(oid) + " " + file + "\n"
 	_, err = stageFile.WriteString(content)
 	if err != nil {
 		return err
@@ -184,8 +184,8 @@ func (lvcsStage *LVCSStageManager) RemoveStageContent(file string) error {
 	scanner := bufio.NewScanner(stageFile)
 	for scanner.Scan() {
 		line := scanner.Text()
-		parts := strings.SplitN(line, " ", 2)
-		if len(parts) != 2 {
+		parts := strings.SplitN(line, " ", 3)
+		if len(parts) != 3 {
 			// Skip lines that are not in the expected format (path OID)
 			continue
 		}
