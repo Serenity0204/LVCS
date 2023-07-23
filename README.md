@@ -9,7 +9,7 @@ can be found in:
 
 ## Install
 make sure to have go install on your machine
-* go install github.com/Serenity0204/LVCS@v1.0.2
+* go install github.com/Serenity0204/LVCS@v1.0.3
 
 
 ## Example Usage
