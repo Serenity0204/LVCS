@@ -12,11 +12,11 @@
     LVCS dump : will dump the entire LVCS directory
 -Stage:
     LVCS stage : will show all of the staged content
+    LVCS stage untrack * : will untrack all of the files in the stage
     LVCS add <path to file 1> <path to file 2> <path to file 3> .... : will track and add the files to the stage
-    LVCS stage untrack : will untrack all of the files in the stage
     LVCS stage untrack <path to file> : will untrack the input file in the stage
 -FileIO:
-    LVCS hashObject <path to file> : will convert file to OID
+    LVCS hashObject <path to file 1> <path to file 2> <path to file 3> .... : will convert files to OIDs
     LVCS catFile <path to file> : will convert OID back to file content
 -Branch:
     LVCS branch : will list all of the branch
@@ -26,8 +26,8 @@
     LVCS branch checkout <branch name> : will switch to the branch
     LVCS branch delete <branch name> : will delete the branch
 -Commit:
-    LVCS commit : will create a new version under the current version node 
-    LVCS commit inherit : will inherit the parent node's data, if staged files are duplicated with the parent, then will take the staged files
+    LVCS commit : will inherit the parent node's data, if staged files are duplicated with the parent, then will take the staged files
+    LVCS commit fresh : will create a new version under the current version node 
     LVCS commit latest : will show the latest version
     LVCS commit current : will show the current working version
     LVCS commit tree : will show the commit versions as a tree
@@ -36,3 +36,4 @@
 -Log:
     LVCS log : will log out all of the commit history for all of the versions under current branch
     LVCS log <commit version> : will log out the commit content of the input version under current branch
+    LVCS log detail <commit version> : will log out the detailed file content of the input commit version under current branch

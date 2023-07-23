@@ -12,11 +12,11 @@
     LVCS dump
 -Stage:
     LVCS stage
+    LVCS stage untrack *
     LVCS stage add <path to file 1> <path to file 2> <path to file 3>, ....
-    LVCS stage untrack
-    LVCS stage untrack <path to file>
+    LVCS stage untrack <path to file 1> <path to file 2> <path to file 3>, ....
 -FileIO:
-    LVCS hashObject <path to file>
+    LVCS hashObject <path to file 1> <path to file 2> <path to file 3> .... 
     LVCS catFile <path to file>
 -Branch:
     LVCS branch
@@ -27,7 +27,7 @@
     LVCS branch delete <branch name>
 -Commit:
     LVCS commit
-    LVCS commit inherit
+    LVCS commit fresh
     LVCS commit latest
     LVCS commit current
     LVCS commit tree
@@ -36,3 +36,4 @@
 -Log:
     LVCS log
     LVCS log <commit version>
+    LVCS log detail <commit version>

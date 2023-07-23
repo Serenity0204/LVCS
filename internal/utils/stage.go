@@ -67,9 +67,15 @@ func (lvcsStage *LVCSStageManager) keyExists(target string) (bool, error) {
 	return false, nil
 }
 
+func (lvcsStage *LVCSStageManager) ignore(file string) bool {
+	return strings.Contains(file, ".lvcs")
+}
+
 // need to check if file exist or not, if yes then do early return
 func (lvcsStage *LVCSStageManager) Add(file string) error {
-
+	if lvcsStage.ignore(file) {
+		return errors.New("cannot add a .lvcs elements")
+	}
 	// First hash object it
 	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsStage.lvcsPath)
 	// if OID DNE then will create one
@@ -223,6 +229,6 @@ func (lvcsStage *LVCSStageManager) RemoveStageContent(file string) error {
 	if err != nil {
 		return err
 	}
-
+	stageFile.Close()
 	return nil
 }

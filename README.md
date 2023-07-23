@@ -16,17 +16,17 @@ make sure to have go install on your machine
 Go to the directory you want to use LVCS
 * LVCS init
 * LVCS stage add "file 0"
-* LVCS commit inherit
+* LVCS commit
 * LVCS commit tree
 * LVCS stage add "file 1" "file 2"
-* LVCS commit
+* LVCS commit fresh
 * LVCS stage
 * LVCS stage add "file 1" "file 2"
 * LVCS stage untrack "file 2"
 * LVCS commit current
 * LVCS commit switch v0
 * LVCS stage
-* LVCS stage commit inherit
+* LVCS stage commit
 * LVCS commit tree
 * LVCS branch
 * LVCS log

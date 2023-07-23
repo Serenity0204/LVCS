@@ -1,12 +1,15 @@
 package utils
 
 import (
+	"bufio"
 	"errors"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 )
+
+const dash string = "****************************************************************************************************"
 
 type LVCSLogManager struct {
 	lvcsBaseManager
@@ -77,4 +80,41 @@ func (lvcsLogger *LVCSLogManager) LogByVersion(version string) (string, error) {
 		return "", err
 	}
 	return string(content), nil
+}
+
+// will log out the detailed content for that version in the current branch
+func (lvcsLogger *LVCSLogManager) LogByVersionDetail(version string) (string, error) {
+	logs, err := lvcsLogger.LogByVersion(version)
+	if err != nil {
+		return "", err
+	}
+	scanner := bufio.NewScanner(strings.NewReader(logs))
+	lvcsFileIOMan := NewLVCSFileHashIOManager(lvcsLogger.lvcsPath)
+	logContent := "Commit History With Detailed File View:\n\n"
+	if len(logs) == 0 {
+		logContent += "Empty\n"
+		return logContent, nil
+	}
+
+	i := 1
+	for scanner.Scan() {
+		line := scanner.Text()
+		parts := strings.Split(line, " ")
+		if len(parts) == 2 {
+			filePath := parts[0]
+			oid := parts[1]
+			content, err := lvcsFileIOMan.CatFile(oid)
+			if err != nil {
+				return "", err
+			}
+			logContent += strconv.Itoa(i) + ":" + filePath + "\n" + dash + "\n" + content + "\n" + dash + "\n\n"
+			i++
+		}
+	}
+	err = scanner.Err()
+	if err != nil {
+		return "", err
+	}
+
+	return logContent, nil
 }
