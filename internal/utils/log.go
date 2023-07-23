@@ -89,7 +89,7 @@ func (lvcsLogger *LVCSLogManager) LogByVersionDetail(version string) (string, er
 		return "", err
 	}
 	scanner := bufio.NewScanner(strings.NewReader(logs))
-	lvcsFileIO := NewLVCSFileHashIOManager(lvcsLogger.lvcsPath)
+	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsLogger.lvcsPath)
 	logContent := "Commit History With Detailed File View:\n\n"
 	if len(logs) == 0 {
 		logContent += "Empty\n"
@@ -103,7 +103,7 @@ func (lvcsLogger *LVCSLogManager) LogByVersionDetail(version string) (string, er
 		if len(parts) == 3 {
 			filePath := parts[0]
 			oid := parts[1]
-			content, err := lvcsFileIO.CatFile(oid)
+			content, err := lvcsFileHashIO.CatFile(oid)
 			if err != nil {
 				return "", err
 			}

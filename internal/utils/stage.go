@@ -67,14 +67,10 @@ func (lvcsStage *LVCSStageManager) keyExists(target string) (bool, error) {
 	return false, nil
 }
 
-func (lvcsStage *LVCSStageManager) ignore(file string) bool {
-	return strings.Contains(file, ".lvcs")
-}
-
 // need to check if file exist or not, if yes then do early return
 func (lvcsStage *LVCSStageManager) Add(file string) error {
-	if lvcsStage.ignore(file) {
-		return errors.New("cannot add a .lvcs elements")
+	if lvcsStage.ignoreOrAbsPath(file) {
+		return errors.New("cannot add a .lvcs elements or using absolute path")
 	}
 	// First hash object it
 	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsStage.lvcsPath)

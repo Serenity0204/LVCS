@@ -164,7 +164,7 @@ func (lvcsRestore *LVCSRestoreManager) getFilesAndOIDs(versionPath string) ([]st
 }
 
 func (lvcsRestore *LVCSRestoreManager) writeOIDContent(toBeCreated []string, oids []string) error {
-	lvcsFileIO := NewLVCSFileHashIOManager(lvcsRestore.lvcsPath)
+	lvcsFileHashIO := NewLVCSFileHashIOManager(lvcsRestore.lvcsPath)
 
 	wd, err := os.Getwd()
 	if err != nil {
@@ -181,7 +181,7 @@ func (lvcsRestore *LVCSRestoreManager) writeOIDContent(toBeCreated []string, oid
 		}
 		defer fileHandle.Close()
 		// Write CatFile content into the file
-		content, err := lvcsFileIO.CatFile(oids[i])
+		content, err := lvcsFileHashIO.CatFile(oids[i])
 		if err != nil {
 			return err
 		}

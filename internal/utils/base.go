@@ -1,5 +1,10 @@
 package utils
 
+import (
+	"path/filepath"
+	"strings"
+)
+
 type lvcsBaseManager struct {
 	lvcsPath           string
 	lvcsObjPath        string
@@ -18,4 +23,8 @@ func newLVCSBaseManager(lvcsPath string) lvcsBaseManager {
 		lvcsStagePath:      lvcsPath + "/stage.txt",
 		lvcsCurrentRefPath: lvcsPath + "/currentRef.txt",
 	}
+}
+
+func (lvcsBase lvcsBaseManager) ignoreOrAbsPath(file string) bool {
+	return strings.Contains(file, ".lvcs") || filepath.IsAbs(file)
 }
