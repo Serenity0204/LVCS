@@ -9,8 +9,9 @@ can be found in:
 
 ## Install
 make sure to have go install on your machine
-* go install github.com/Serenity0204/LVCS@v1.0.5
-
+```
+go install github.com/Serenity0204/LVCS@v1.0.5
+```
 
 ## Example Usage
 Go to the directory you want to use LVCS
@@ -37,13 +38,14 @@ LVCS dump
 ```
 
 ## Uninstall
-* windows: del %GOPATH%\bin\LVCS.exe
-* macOS/Linux: rm $GOPATH/bin/LVCS
-
-
-## Design
-Can be found in https://github.com/Serenity0204/LVCS/blob/master/design.txt
-
+* windows:
+```
+del %GOPATH%\bin\LVCS.exe
+```
+* macOS/Linux: 
+```
+rm $GOPATH/bin/LVCS
+```
 
 ## Features
 
@@ -55,3 +57,5 @@ Can be found in https://github.com/Serenity0204/LVCS/blob/master/design.txt
 - Allowes users to log the commit history either by version or log out all of them
 
 
+## Design
+Can be found in https://github.com/Serenity0204/LVCS/blob/master/design.txt
