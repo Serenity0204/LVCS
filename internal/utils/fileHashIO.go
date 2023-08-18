@@ -42,10 +42,10 @@ func (lvcsFileHashIO *LVCSFileHashIOManager) HashObject(file string) (string, er
 	}
 
 	if info.IsDir() {
-		return "", errors.New("cannot add a directory")
+		return "", errors.New("cannot hashobject a directory")
 	}
 	if lvcsFileHashIO.ignoreOrAbsPath(file) {
-		return "", errors.New("cannot hash .lvcs element or absolute path")
+		return "", errors.New("cannot hashobject .lvcs element or absolute path")
 	}
 
 	content, err := os.ReadFile(file)

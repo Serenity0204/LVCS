@@ -3,6 +3,7 @@ package internal
 import (
 	"errors"
 	"strconv"
+	"strings"
 
 	"github.com/Serenity0204/LVCS/internal/utils"
 )
@@ -19,6 +20,9 @@ func (lvcsManager *LVCSManager) hashObjectHandler(subcommands []string) (string,
 	}
 	oids := "List of hashed OIDs:\n"
 	for _, file := range subcommands {
+		if strings.Contains(file, "../") {
+			return "", errors.New("cannot hashObject files that's above the root of this directory")
+		}
 		oid, err := fileHashIOMan.HashObject(file)
 		if err != nil {
 			return "", err
@@ -258,6 +262,10 @@ func (lvcsManager *LVCSManager) stageHandler(subcommands []string) (string, erro
 				continue
 			}
 			if subcommands[0] == "add" {
+				// if file includes ../ then fatal
+				if strings.Contains(file, "../") {
+					return "", errors.New("cannot add files that's above the root of this directory")
+				}
 				err := stageMan.Add(file)
 				if err != nil {
 					return "", err
@@ -324,7 +332,6 @@ func (lvcsManager *LVCSManager) logHandler(subcommands []string) (string, error)
 }
 
 func (lvcsManager *LVCSManager) restoreHandler(subcommands []string) (string, error) {
-	//
 	restoreMan, ok := lvcsManager.lvcsMan["restore"].(*utils.LVCSRestoreManager)
 	if !ok {
 		return "", errors.New("failed to execute restore")
@@ -332,9 +339,9 @@ func (lvcsManager *LVCSManager) restoreHandler(subcommands []string) (string, er
 	if len(subcommands) != 1 {
 		return "", errors.New("invalid number of arguments")
 	}
-	err := restoreMan.Restore(subcommands[0])
+	branchName, err := restoreMan.Restore(subcommands[0])
 	if err != nil {
 		return "", err
 	}
-	return string("Restored " + subcommands[0] + " as " + subcommands[0] + " success"), nil
+	return string("Restored " + subcommands[0] + " as " + branchName + "_" + subcommands[0] + ".zip success"), nil
 }

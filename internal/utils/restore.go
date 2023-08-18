@@ -21,64 +21,64 @@ func NewLVCSRestoreManager(lvcsPath string) *LVCSRestoreManager {
 	}
 }
 
-// restore data by commit version under current branch
-func (lvcsRestore *LVCSRestoreManager) Restore(version string) error {
+// restore data by commit version under current branch, return the branch name as well
+func (lvcsRestore *LVCSRestoreManager) Restore(version string) (string, error) {
 
 	// check if version exists first
 	lvcsBranch := NewLVCSBranchManager(lvcsRestore.lvcsPath)
 	curBranch, err := lvcsBranch.GetCurrentBranch()
 	if err != nil {
-		return err
+		return "", err
 	}
 	lvcsCommit := NewLVCSCommitManager(lvcsRestore.lvcsPath)
 	exist, err := lvcsCommit.versionExists(curBranch, version)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if !exist {
-		return errors.New("version:" + version + " does not exist")
+		return "", errors.New("version:" + version + " does not exist")
 	}
 
 	// read it
 	versionPath := lvcsRestore.lvcsCommitPath + "/" + curBranch + "/" + version + ".txt"
 	toBeCreated, oids, err := lvcsRestore.getFilesAndOIDs(versionPath)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// create temp folder
 	err = lvcsRestore.createTempFolder()
 	if err != nil {
-		return err
+		return "", err
 	}
 	wd, err := os.Getwd()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	tempDir := wd + "/temp"
 	err = lvcsRestore.createDirectoriesAndFiles(toBeCreated, tempDir)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// write oid content
 	err = lvcsRestore.writeOIDContent(toBeCreated, oids)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// zip it
 	err = lvcsRestore.createZipFile(tempDir, version, curBranch)
 	if err != nil {
-		return err
+		return "", err
 	}
 	// remove temp
 	err = os.RemoveAll(tempDir)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return curBranch, nil
 }
 
 func (lvcsRestore *LVCSRestoreManager) createTempFolder() error {

@@ -105,8 +105,12 @@ func (lvcsStage *LVCSStageManager) Add(file string) error {
 	}
 	defer stageFile.Close()
 
+	// Extract the part of the path after the last "../", this is only for testing, in real production path that includes .. will fatal
+	parts := strings.Split(file, "../")
+	fileName := parts[len(parts)-1]
+
 	// Append absolute file path, oid, filename into stage.txt
-	content := absPath + " " + string(oid) + " " + file + "\n"
+	content := absPath + " " + string(oid) + " " + fileName + "\n"
 	_, err = stageFile.WriteString(content)
 	if err != nil {
 		return err

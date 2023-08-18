@@ -45,7 +45,7 @@ func TestRestore(t *testing.T) {
 
 	// after add and commit, restore
 	lvcsRestore := utils.NewLVCSRestoreManager(lvcsTestDir)
-	err = lvcsRestore.Restore("v0")
+	_, err = lvcsRestore.Restore("v0")
 	if err != nil {
 		t.Errorf(err.Error())
 	}

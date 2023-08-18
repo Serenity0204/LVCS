@@ -14,26 +14,27 @@ make sure to have go install on your machine
 
 ## Example Usage
 Go to the directory you want to use LVCS
-* LVCS init
-* LVCS stage add "file 0"
-* LVCS commit
-* LVCS commit tree
-* LVCS stage add "file 1" "file 2"
-* LVCS commit fresh
-* LVCS stage
-* LVCS stage add "file 1" "file 2"
-* LVCS stage untrack "file 2"
-* LVCS commit current
-* LVCS commit switch v0
-* LVCS stage
-* LVCS commit
-* LVCS commit tree
-* LVCS branch
-* LVCS log
-* LVCS commit lca v1 v2
-* LVCS restore v0
-* LVCS dump
-
+```
+LVCS init
+LVCS stage add "file 0"
+LVCS commit
+LVCS commit tree
+LVCS stage add "file 1" "file 2"
+LVCS commit fresh
+LVCS stage
+LVCS stage add "file 1" "file 2"
+LVCS stage untrack "file 2"
+LVCS commit current
+LVCS commit switch v0
+LVCS stage
+LVCS commit
+LVCS commit tree
+LVCS branch
+LVCS log
+LVCS commit lca v1 v2
+LVCS restore v0
+LVCS dump
+```
 
 ## Uninstall
 * windows: del %GOPATH%\bin\LVCS.exe
