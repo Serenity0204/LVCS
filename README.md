@@ -46,10 +46,12 @@ del %GOPATH%\bin\LVCS.exe
 ```
 rm $GOPATH/bin/LVCS
 ```
-deleting source file at
+deleting source files at
 ```
 C:\Users\your username\go\pkg\mod\github.com\!serenity0204
 ```
+for windows
+
 ## Features
 
 - Allows users to init/dump the .lvcs directory
