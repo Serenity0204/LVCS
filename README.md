@@ -1,6 +1,6 @@
 
 # LVCS(Little Version Control System)
-LVCS(Little Version Control System) is a versatile version control system designed to simplify code management and collaboration. With its intuitive command-line interface built in golang cobra, users can efficiently track, stage, and commit changes, navigate branches, and visualize commit history. Along with the version control functionalities, user will also receive a random cute ASCII art everytime the user enters commands. 
+LVCS(Little Version Control System) is a versatile version control system designed to simplify code managements. With its intuitive command-line interface built in golang cobra, users can efficiently track, stage, and commit changes, navigate branches, and visualize commit history. Along with the version control functionalities, user will also receive a random cute ASCII art everytime the user enters commands. 
 
 ## Operations
 can be found in:
