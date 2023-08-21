@@ -38,11 +38,11 @@ LVCS dump
 ```
 
 ## Uninstall
-* windows:
+* Windows:
 ```
 del %GOPATH%\bin\LVCS.exe
 ```
-* macOS/Linux: 
+* MacOS/Linux: 
 ```
 rm $GOPATH/bin/LVCS
 ```
@@ -58,9 +58,9 @@ for windows
 - Allows users to track/untrack files
 - Allows users to view the file content by doing hashObject(file path to OID) and catFile(OID to file content)
 - Allows users to do various operations of branching(CRUD all supported)
-- Allowes users to do version commits in a tree fashioned(utlized nary tree to achieve this functionality)
-- Allowes users to log the commit history either by version or log out all of them
-
+- Allows users to do version commits in a tree fashioned(utilized nary tree to achieve this functionality)
+- Allows users to log the commit history either by versions or logging out all of them
+- Allows users to restore the snapshots of the recorded commit
 
 ## Design
 Can be found in https://github.com/Serenity0204/LVCS/blob/master/design.txt
